@@ -1,0 +1,80 @@
+{
+  "world": [
+    {
+      "id": "atlantic-islands",
+      "region": "Atlantic Islands",
+      "places": [
+        {
+          "id": "azores",
+          "name": "Azores",
+          "country": "Portugal",
+          "locales": [
+            {
+              "id": "sete-cidades",
+              "name": "Sete Cidades",
+              "island": "São Miguel",
+              "mood": "Twin crater lakes — one green, one blue — ringed by volcanic ridges and Atlantic fog. Ancient, still, mythic.",
+              "palette": [
+                { "name": "Crater Blue", "hex": "#3B6E8C" },
+                { "name": "Lake Jade", "hex": "#4E8C6E" },
+                { "name": "Volcanic Ash", "hex": "#4A4A52" },
+                { "name": "Atlantic Mist", "hex": "#B8C9C9" },
+                { "name": "Hydrangea Bloom", "hex": "#7A85B8" }
+              ],
+              "fonts": {
+                "display": "Libre Baskerville",
+                "displayWeight": "400",
+                "body": "Nunito",
+                "mono": "DM Mono",
+                "googleUrl": "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Nunito:wght@300;400;500&family=DM+Mono&display=swap",
+                "note": "Calm and watery — like light refracting through the crater lake."
+              }
+            },
+            {
+              "id": "furnas",
+              "name": "Furnas",
+              "island": "São Miguel",
+              "mood": "Sulfur vents, steaming calderas, tropical botanical gardens growing from volcanic heat. Primal and lush.",
+              "palette": [
+                { "name": "Sulfur Vent", "hex": "#C9A84C" },
+                { "name": "Caldera Earth", "hex": "#6B3D2E" },
+                { "name": "Fern Dark", "hex": "#2E4A2E" },
+                { "name": "Hot Spring Ivory", "hex": "#F0E8D0" },
+                { "name": "Thermal Rust", "hex": "#A0522D" }
+              ],
+              "fonts": {
+                "display": "Playfair Display",
+                "displayWeight": "600",
+                "body": "Lato",
+                "mono": "DM Mono",
+                "googleUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&family=DM+Mono&display=swap",
+                "note": "Dense and weighted — heat pressed into type."
+              }
+            },
+            {
+              "id": "ribeira-grande",
+              "name": "Ribeira Grande",
+              "island": "São Miguel",
+              "mood": "Whitewashed churches, black basalt borders, azulejo tile faces staring from old walls. Maritime and devout.",
+              "palette": [
+                { "name": "Azulejo Blue", "hex": "#1B4F8A" },
+                { "name": "Basalt Black", "hex": "#1A1A1F" },
+                { "name": "Chapel White", "hex": "#F4F0E6" },
+                { "name": "Atlantic Foam", "hex": "#A8BFC4" },
+                { "name": "Terracotta Coast", "hex": "#C4714A" }
+              ],
+              "fonts": {
+                "display": "Crimson Pro",
+                "displayWeight": "400",
+                "body": "Source Sans 3",
+                "mono": "DM Mono",
+                "googleUrl": "https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Source+Sans+3:wght@300;400;600&family=DM+Mono&display=swap",
+                "note": "Formal and coastal — salt air through stone archways."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
