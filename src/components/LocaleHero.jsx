@@ -52,7 +52,7 @@ export default function LocaleHero({ locale }) {
             opacity: 0.85,
           }}
         >
-          {locale.regionName} / {locale.island || locale.placeName}
+          {locale.placeName} / {locale.island}
         </p>
         <h2
           style={{

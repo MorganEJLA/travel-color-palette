@@ -8,6 +8,7 @@ import FontPairingPanel from "./components/FontPairingPanel";
 import PalettePanel from "./components/PalettePanel";
 import StylePreview from "./components/StylePreview";
 import LocaleHero from "./components/LocaleHero";
+import GradientTool from "./components/GradientTool";
 
 const allLocales = data.world.flatMap((region) =>
   region.places.flatMap((place) =>
@@ -104,7 +105,8 @@ export default function App() {
         >
           {/* PALETTE COLUMN */}
           <PalettePanel locale={locale} />
-
+          {/* GRADIENT TOOL COLUMN */}
+          <GradientTool locale={locale} />
           {/* RIGHT COLUMN */}
           <div
             style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
