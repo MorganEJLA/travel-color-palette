@@ -1,25 +1,21 @@
+import { db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import data from "../data/locales.json";
+import { useState, useEffect } from "react";
 
 import LocaleHero from "../components/LocaleHero";
 import PalettePanel from "../components/PalettePanel";
 import GradientTool from "../components/GradientTool";
 import FontPairingPanel from "../components/FontPairingPanel";
-
-const allPlaces = data.world.flatMap((region) =>
-  region.places.map((place) => ({
-    ...place,
-    regionName: region.region,
-  })),
-);
+import { FONT_PAIRS } from "../data/fontPairs";
 
 export default function GeneratorView() {
   const { albumId, islandId } = useParams();
   const navigate = useNavigate();
-  const place = allPlaces.find((p) => p.id === albumId);
-  const island = place?.islands.find((i) => i.id === islandId);
 
+  const [place, setPlace] = useState(null);
+  const [island, setIsland] = useState(null);
+  const [fontMood, setFontMood] = useState("Serif & Classic");
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [generatedLocale, setGeneratedLocale] = useState(null);
@@ -27,7 +23,20 @@ export default function GeneratorView() {
   const [form, setForm] = useState({
     name: "",
   });
-
+  const [generateCount, setGenerateCount] = useState(0);
+  const MAX_GENERATES = 3;
+  useEffect(() => {
+    async function fetchAlbum() {
+      const snap = await getDoc(doc(db, "albums", albumId));
+      if (snap.exists()) {
+        const albumData = snap.data();
+        setPlace(albumData);
+        const foundIsland = albumData.islands.find((i) => i.id === islandId);
+        setIsland(foundIsland);
+      }
+    }
+    fetchAlbum();
+  }, [albumId, islandId]);
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
@@ -46,6 +55,10 @@ export default function GeneratorView() {
   }
 
   async function handleGenerate() {
+    if (generateCount >= MAX_GENERATES) {
+      setError("Maximum generations reached for this session.");
+      return;
+    }
     if (!form.name || images.length === 0) {
       setError("Please enter a locale name and upload at least one image.");
       return;
@@ -66,45 +79,47 @@ export default function GeneratorView() {
           },
         })),
       );
+      const pairs = FONT_PAIRS[fontMood];
+      const selectedPair = pairs[Math.floor(Math.random() * pairs.length)];
 
       const prompt = `You are a color research tool for a design atlas called Chromaterra.
 
-I am analyzing images from: ${form.name}, located on ${island?.name || ""}, in the ${place?.name || ""}.
+    I am analyzing images from: ${form.name}, located on ${island?.name || ""}, in the ${place?.name || ""}.
 
-Analyze all the images and extract a color palette that represents the true visual character of this location.
+    Analyze all the images and extract a color palette that represents the true visual character of this location.
 
-Return ONLY a valid JSON object with no markdown, no backticks, no explanation:
+    Return ONLY a valid JSON object with no markdown, no backticks, no explanation:
 
-{
-  "id": "${form.name.toLowerCase().replace(/\s+/g, "-")}",
-  "name": "${form.name}",
-  "placeName": "${place?.name || ""}",
-  "islandName": "${island?.name || ""}",
-  "islandId": "${islandId}",
-  "regionName": "Atlantic Islands",
-  "mood": "A 1-2 sentence evocative description of the location.",
-  "palette": [
-    { "name": "Swatch Name 1", "hex": "#xxxxxx" },
-    { "name": "Swatch Name 2", "hex": "#xxxxxx" },
-    { "name": "Swatch Name 3", "hex": "#xxxxxx" },
-    { "name": "Swatch Name 4", "hex": "#xxxxxx" },
-    { "name": "Swatch Name 5", "hex": "#xxxxxx" }
-  ],
-  "fonts": {
-    "display": "Playfair Display",
-    "displayWeight": "400",
-    "body": "Lato",
-    "mono": "DM Mono",
-    "googleUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&family=DM+Mono&display=swap",
-    "note": "A short note about why these fonts suit the location."
-  }
-}
+    {
+    "id": "${form.name.toLowerCase().replace(/\s+/g, "-")}",
+    "name": "${form.name}",
+    "placeName": "${place?.name || ""}",
+    "islandName": "${island?.name || ""}",
+    "islandId": "${islandId}",
+    "regionName": "Atlantic Islands",
+    "mood": "A 1-2 sentence evocative description of the location.",
+    "palette": [
+        { "name": "Swatch Name 1", "hex": "#xxxxxx" },
+        { "name": "Swatch Name 2", "hex": "#xxxxxx" },
+        { "name": "Swatch Name 3", "hex": "#xxxxxx" },
+        { "name": "Swatch Name 4", "hex": "#xxxxxx" },
+        { "name": "Swatch Name 5", "hex": "#xxxxxx" }
+    ],
+    "fonts": {
+        "display": "${selectedPair.display}",
+        "displayWeight": "${selectedPair.displayWeight}",
+        "body": "${selectedPair.body}",
+        "mono": "${selectedPair.mono}",
+        "googleUrl": "${selectedPair.googleUrl}",
+        "note": "A short note about why these fonts suit the location."
+    }
+    }
 
-Rules:
-- Swatch names should be poetic and location-specific
-- Hex values must be accurate to what you see in the images
-- Mood should be evocative and under 30 words
-- Return ONLY the JSON, nothing else`;
+    Rules:
+    - Swatch names should be poetic and location-specific
+    - Hex values must be accurate to what you see in the images
+    - Mood should be evocative and under 30 words
+    - Return ONLY the JSON, nothing else`;
 
       const response = await fetch("/api/anthropic/v1/messages", {
         method: "POST",
@@ -135,7 +150,7 @@ Rules:
       console.error(err);
       setError("Something went wrong. Check the console for details.");
     }
-
+    setGenerateCount((prev) => prev + 1);
     setLoading(false);
   }
 
@@ -242,7 +257,41 @@ Rules:
             }}
           />
         </div>
-
+        <div style={{ marginBottom: "1.5rem", maxWidth: "400px" }}>
+          <label
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.6rem",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color: "#888",
+              display: "block",
+              marginBottom: "0.4rem",
+            }}
+          >
+            Font Mood
+          </label>
+          <select
+            value={fontMood}
+            onChange={(e) => setFontMood(e.target.value)}
+            style={{
+              width: "100%",
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.72rem",
+              padding: "0.5rem 0.75rem",
+              border: "1px solid #C8C0B0",
+              background: "#F0EBE0",
+              color: "#1A1A18",
+              boxSizing: "border-box",
+            }}
+          >
+            {Object.keys(FONT_PAIRS).map((mood) => (
+              <option key={mood} value={mood}>
+                {mood}
+              </option>
+            ))}
+          </select>
+        </div>
         {/* Upload */}
         <div style={{ marginBottom: "1.5rem" }}>
           <label
@@ -270,23 +319,51 @@ Rules:
             }}
           />
           {images.length > 0 && (
-            <p
+            <div
               style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: "0.6rem",
-                color: "#888",
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
                 marginTop: "0.4rem",
               }}
             >
-              {images.length} image{images.length > 1 ? "s" : ""} selected
-            </p>
+              <p
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: "0.6rem",
+                  color: "#888",
+                  margin: 0,
+                }}
+              >
+                {images.length} image{images.length > 1 ? "s" : ""} selected
+              </p>
+              <button
+                onClick={() => {
+                  setImages([]);
+                  document.querySelector("input[type='file']").value = "";
+                }}
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  background: "transparent",
+                  border: "none",
+                  color: "#888",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                Clear
+              </button>
+            </div>
           )}
         </div>
 
         {/* Generate button */}
         <button
           onClick={handleGenerate}
-          disabled={loading}
+          disabled={loading || generateCount >= MAX_GENERATES}
           style={{
             fontFamily: "'DM Mono', monospace",
             fontSize: "0.65rem",
@@ -335,7 +412,27 @@ Rules:
             {/* Save button */}
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
               <button
-                onClick={() => navigate(`/${albumId}`)}
+                onClick={async () => {
+                  const albumRef = doc(db, "albums", albumId);
+                  const albumSnap = await getDoc(albumRef);
+                  const albumData = albumSnap.data();
+
+                  const updatedIslands = albumData.islands.map((island) => {
+                    if (island.id === islandId) {
+                      return {
+                        ...island,
+                        locales: [...island.locales, generatedLocale],
+                      };
+                    }
+                    return island;
+                  });
+
+                  await setDoc(albumRef, {
+                    ...albumData,
+                    islands: updatedIslands,
+                  });
+                  navigate(`/${albumId}`);
+                }}
                 style={{
                   fontFamily: "'DM Mono', monospace",
                   fontSize: "0.65rem",

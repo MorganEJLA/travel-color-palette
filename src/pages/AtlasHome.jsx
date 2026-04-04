@@ -1,20 +1,57 @@
 import { useNavigate } from "react-router-dom";
-import data from "../data/locales.json";
+import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 
-const albums = data.world.flatMap((region) =>
-  region.places.map((place) => ({
-    id: place.id,
-    name: place.name,
-    country: place.country,
-    localeCount: place.islands.flatMap((i) => i.locales).length,
-    previewColors:
-      place.islands[0]?.locales[0]?.palette.slice(0, 3).map((s) => s.hex) || [],
-  })),
-);
+import NewAlbumModal from "../components/NewAlbumModal";
 
 export default function AtlasHome() {
   const navigate = useNavigate();
+  const [albums, setAlbums] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchAlbums() {
+      const snapshot = await getDocs(collection(db, "albums"));
+      const fetched = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        const allLocales = data.islands?.flatMap((i) => i.locales) || [];
+        return {
+          id: doc.id,
+          name: data.name,
+          country: data.country,
+          localeCount: allLocales.length,
+          previewColors:
+            data.islands?.[0]?.locales?.[0]?.palette
+              ?.slice(0, 3)
+              .map((s) => s.hex) || [],
+        };
+      });
+      setAlbums(fetched);
+      setLoading(false);
+    }
+    fetchAlbums();
+  }, []);
 
+  if (loading)
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#F0EBE0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "'DM Mono', monospace",
+          fontSize: "0.6rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "#888",
+        }}
+      >
+        Loading...
+      </div>
+    );
   return (
     <div
       style={{
@@ -120,14 +157,11 @@ export default function AtlasHome() {
               (e.currentTarget.style.transform = "translateY(0)")
             }
           >
-            {/* Color strip */}
             <div style={{ display: "flex", height: "6px" }}>
               {album.previewColors.map((hex, i) => (
                 <div key={i} style={{ flex: 1, background: hex }} />
               ))}
             </div>
-
-            {/* Card content */}
             <div style={{ padding: "1.25rem" }}>
               <p
                 style={{
@@ -159,16 +193,42 @@ export default function AtlasHome() {
                   fontSize: "0.6rem",
                   color: "#888",
                   letterSpacing: "0.1em",
+                  margin: "0 0 0.5rem 0",
                 }}
               >
                 {album.localeCount} locale{album.localeCount !== 1 ? "s" : ""}
               </p>
+              <button
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (!confirm(`Delete ${album.name}?`)) return;
+                  const { deleteDoc, doc } = await import("firebase/firestore");
+                  await deleteDoc(doc(db, "albums", album.id));
+                  setAlbums((prev) => prev.filter((a) => a.id !== album.id));
+                }}
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  background: "transparent",
+                  border: "none",
+                  color: "#aaa",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  padding: 0,
+                  display: "block",
+                }}
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
 
         {/* New Album card */}
         <div
+          onClick={() => setShowModal(true)}
           style={{
             border: "1px dashed #C8C0B0",
             background: "transparent",
@@ -195,6 +255,25 @@ export default function AtlasHome() {
           </span>
         </div>
       </div>
+
+      {showModal && (
+        <NewAlbumModal
+          onClose={() => setShowModal(false)}
+          onSave={async (newAlbum) => {
+            await setDoc(doc(db, "albums", newAlbum.id), newAlbum);
+            setAlbums((prev) => [
+              ...prev,
+              {
+                id: newAlbum.id,
+                name: newAlbum.name,
+                country: newAlbum.country,
+                localeCount: 0,
+                previewColors: [],
+              },
+            ]);
+          }}
+        />
+      )}
     </div>
   );
 }

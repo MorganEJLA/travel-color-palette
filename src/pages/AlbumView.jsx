@@ -1,17 +1,45 @@
 import { useParams, useNavigate } from "react-router-dom";
-import data from "../data/locales.json";
-
-const allPlaces = data.world.flatMap((region) =>
-  region.places.map((place) => ({
-    ...place,
-    regionName: region.region,
-  })),
-);
-
+import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import NewIslandModal from "../components/NewIslandModal";
 export default function AlbumView() {
   const { albumId } = useParams();
   const navigate = useNavigate();
-  const place = allPlaces.find((p) => p.id === albumId);
+  const [place, setPlace] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showIslandModal, setShowIslandModal] = useState(false);
+
+  useEffect(() => {
+    async function fetchAlbum() {
+      const snap = await getDoc(doc(db, "albums", albumId));
+      if (snap.exists()) {
+        setPlace(snap.data());
+      }
+      setLoading(false);
+    }
+    fetchAlbum();
+  }, [albumId]);
+
+  if (loading)
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#F0EBE0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "'DM Mono', monospace",
+          fontSize: "0.6rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "#888",
+        }}
+      >
+        Loading...
+      </div>
+    );
 
   if (!place) return <p>Album not found.</p>;
 
@@ -61,7 +89,6 @@ export default function AlbumView() {
           Chromaterra
         </span>
       </div>
-
       {/* ALBUM HEADER */}
       <div
         style={{
@@ -218,7 +245,51 @@ export default function AlbumView() {
             </div>
           </div>
         ))}
+        {/* Add Island button */}
+        <div
+          onClick={() => setShowIslandModal(true)}
+          style={{
+            border: "1px dashed #C8C0B0",
+            background: "transparent",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1rem",
+            marginTop: "1rem",
+            transition: "border-color 0.1s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#1A1A18")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#C8C0B0")}
+        >
+          <span
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.6rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "#888",
+            }}
+          >
+            + Add Region / Island
+          </span>
+        </div>
       </div>
+
+      {showIslandModal && (
+        <NewIslandModal
+          onClose={() => setShowIslandModal(false)}
+          onSave={async (newIsland) => {
+            const albumRef = doc(db, "albums", albumId);
+            const snap = await getDoc(albumRef);
+            const albumData = snap.data();
+            const updatedIslands = [...albumData.islands, newIsland];
+            await setDoc(albumRef, { ...albumData, islands: updatedIslands });
+            setPlace({ ...albumData, islands: updatedIslands });
+            setShowIslandModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import data from "../data/locales.json";
+import { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 import LocaleHero from "../components/LocaleHero";
 import PalettePanel from "../components/PalettePanel";
@@ -8,20 +9,6 @@ import GradientTool from "../components/GradientTool";
 import FontPairingPanel from "../components/FontPairingPanel";
 import StylePreview from "../components/StylePreview";
 import Footer from "../components/Footer";
-
-const allLocales = data.world.flatMap((region) =>
-  region.places.flatMap((place) =>
-    place.islands.flatMap((island) =>
-      island.locales.map((locale) => ({
-        ...locale,
-        placeName: place.name,
-        islandName: island.name,
-        islandId: island.id,
-        regionName: region.region,
-      })),
-    ),
-  ),
-);
 
 function loadFont(googleUrl) {
   const existing = document.querySelector(`link[href="${googleUrl}"]`);
@@ -35,13 +22,53 @@ function loadFont(googleUrl) {
 export default function LocaleView() {
   const { albumId, islandId, localeId } = useParams();
   const navigate = useNavigate();
-  const locale = allLocales.find(
-    (l) => l.id === localeId && l.islandId === islandId,
-  );
+  const [locale, setLocale] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLocale() {
+      const snap = await getDoc(doc(db, "albums", albumId));
+      if (snap.exists()) {
+        const albumData = snap.data();
+        const island = albumData.islands.find((i) => i.id === islandId);
+        const found = island?.locales.find((l) => l.id === localeId);
+        if (found) {
+          setLocale({
+            ...found,
+            placeName: albumData.name,
+            islandName: island.name,
+            islandId: island.id,
+          });
+        }
+      }
+      setLoading(false);
+    }
+    fetchLocale();
+  }, [albumId, islandId, localeId]);
 
   useEffect(() => {
     if (locale?.fonts?.googleUrl) loadFont(locale.fonts.googleUrl);
   }, [locale]);
+
+  if (loading)
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#F0EBE0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "'DM Mono', monospace",
+          fontSize: "0.6rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "#888",
+        }}
+      >
+        Loading...
+      </div>
+    );
 
   if (!locale) return <p>Locale not found.</p>;
 
