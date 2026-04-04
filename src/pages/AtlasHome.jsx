@@ -6,9 +6,9 @@ const albums = data.world.flatMap((region) =>
     id: place.id,
     name: place.name,
     country: place.country,
-    localeCount: place.locales.length,
+    localeCount: place.islands.flatMap((i) => i.locales).length,
     previewColors:
-      place.locales[0]?.palette.slice(0, 3).map((s) => s.hex) || [],
+      place.islands[0]?.locales[0]?.palette.slice(0, 3).map((s) => s.hex) || [],
   })),
 );
 

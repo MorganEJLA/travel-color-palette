@@ -1,9 +1,12 @@
+import { useNavigate, useParams } from "react-router-dom";
 export default function LocaleHero({ locale }) {
   const primary = locale.palette[0].hex;
   const secondary = locale.palette[1].hex;
   const accent = locale.palette[2].hex;
   const light = locale.palette[3].hex;
 
+  const navigate = useNavigate();
+  const { albumId } = useParams();
   return (
     <div
       style={{
@@ -52,8 +55,23 @@ export default function LocaleHero({ locale }) {
             opacity: 0.85,
           }}
         >
-          {locale.placeName}
-          {locale.island ? ` / ${locale.island}` : ""}
+          <span
+            onClick={() => navigate(`/${albumId}`)}
+            style={{ cursor: "pointer", textDecoration: "none" }}
+          >
+            {locale.placeName}
+          </span>
+          {locale.islandName && (
+            <>
+              {" / "}
+              <span
+                onClick={() => navigate(`/${albumId}`)}
+                style={{ cursor: "pointer", textDecoration: "none" }}
+              >
+                {locale.islandName}
+              </span>
+            </>
+          )}
         </p>
         <h2
           style={{
