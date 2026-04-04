@@ -9,8 +9,9 @@ import PalettePanel from "./components/PalettePanel";
 import StylePreview from "./components/StylePreview";
 import LocaleHero from "./components/LocaleHero";
 import GradientTool from "./components/GradientTool";
+import LocaleGenerator from "./components/LocaleGenerator";
 
-const allLocales = data.world.flatMap((region) =>
+const baseLocales = data.world.flatMap((region) =>
   region.places.flatMap((place) =>
     place.locales.map((locale) => ({
       ...locale,
@@ -30,7 +31,9 @@ function loadFont(googleUrl) {
 }
 
 export default function App() {
-  const [activeId, setActiveId] = useState(allLocales[0].id);
+  const [allLocales, setAllLocales] = useState(baseLocales);
+  const [activeId, setActiveId] = useState(baseLocales[0].id);
+  const [view, setView] = useState("atlas");
   const locale = allLocales.find((l) => l.id === activeId);
 
   useEffect(() => {
@@ -68,6 +71,22 @@ export default function App() {
         >
           Est. 2025 — Global Aesthetic Reference
         </span>
+        <button
+          onClick={() => setView(view === "atlas" ? "generate" : "atlas")}
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: "0.6rem",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            padding: "0.25rem 0.75rem",
+            background: "transparent",
+            color: view === "generate" ? "#F0EBE0" : "#888",
+            border: `1px solid ${view === "generate" ? "#F0EBE0" : "#555"}`,
+            cursor: "pointer",
+          }}
+        >
+          {view === "atlas" ? "Generate Locale" : "← Atlas"}
+        </button>
         <span
           style={{
             fontFamily: "'DM Mono', monospace",
@@ -81,44 +100,48 @@ export default function App() {
         </span>
       </div>
 
-      {/* MAIN HEADER — POSTER STYLE */}
-      <Header locale={locale} />
-
-      {/* LOCALE NAV — stamp style */}
-      <LocaleNav
-        allLocales={allLocales}
-        activeId={activeId}
-        setActiveId={setActiveId}
-      />
-
-      {/* HERO LOCALE SECTION — poster card */}
-      <LocaleHero locale={locale} />
-
-      {/* MAIN CONTENT GRID */}
-      <main style={{ padding: "2.5rem", maxWidth: "1200px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "2rem",
+      {/* VIEW TOGGLE */}
+      {view === "atlas" ? (
+        <>
+          <Header locale={locale} />
+          <LocaleNav
+            allLocales={allLocales}
+            activeId={activeId}
+            setActiveId={setActiveId}
+          />
+          <LocaleHero locale={locale} />
+          <main style={{ padding: "2.5rem", maxWidth: "1200px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                gap: "2rem",
+              }}
+            >
+              <PalettePanel locale={locale} />
+              <GradientTool locale={locale} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2rem",
+                }}
+              >
+                <FontPairingPanel locale={locale} />
+                <StylePreview locale={locale} />
+              </div>
+            </div>
+          </main>
+        </>
+      ) : (
+        <LocaleGenerator
+          onSave={(newLocale) => {
+            setAllLocales((prev) => [...prev, newLocale]);
+            setActiveId(newLocale.id);
+            setView("atlas");
           }}
-        >
-          {/* PALETTE COLUMN */}
-          <PalettePanel locale={locale} />
-          {/* GRADIENT TOOL COLUMN */}
-          <GradientTool locale={locale} />
-          {/* RIGHT COLUMN */}
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
-          >
-            {/* FONT PAIRING */}
-            <FontPairingPanel locale={locale} />
-
-            {/* STYLE PREVIEW — full poster card */}
-            <StylePreview locale={locale} />
-          </div>
-        </div>
-      </main>
+        />
+      )}
 
       <Footer />
     </div>

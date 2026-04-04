@@ -52,7 +52,8 @@ export default function LocaleHero({ locale }) {
             opacity: 0.85,
           }}
         >
-          {locale.placeName} / {locale.island}
+          {locale.placeName}
+          {locale.island ? ` / ${locale.island}` : ""}
         </p>
         <h2
           style={{
