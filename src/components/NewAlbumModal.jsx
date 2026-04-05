@@ -106,7 +106,7 @@ export default function NewAlbumModal({ onClose, onSave }) {
         >
           {[
             {
-              label: "State / Locale",
+              label: "State / Region / Island Group",
               name: "name",
               placeholder: "e.g. California, São Miguel, Honshu",
             },
@@ -116,7 +116,7 @@ export default function NewAlbumModal({ onClose, onSave }) {
               placeholder: "e.g. North America, Europe, Atlantic Islands",
             },
             {
-              label: "Locale / Island",
+              label: "Locale",
               name: "island",
               placeholder: "e.g. Los Angeles, Furnas, Kyoto",
             },

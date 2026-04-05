@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import NewIslandModal from "../components/NewIslandModal";
+import DeleteButton from "../components/DeleteButton";
+
 export default function AlbumView() {
   const { albumId } = useParams();
   const navigate = useNavigate();
@@ -89,6 +91,7 @@ export default function AlbumView() {
           Chromaterra
         </span>
       </div>
+
       {/* ALBUM HEADER */}
       <div
         style={{
@@ -147,6 +150,22 @@ export default function AlbumView() {
                 {island.name}
               </span>
               <div style={{ flex: 1, height: "1px", background: "#C8C0B0" }} />
+              <DeleteButton
+                label={island.name}
+                onDelete={async () => {
+                  const albumRef = doc(db, "albums", albumId);
+                  const snap = await getDoc(albumRef);
+                  const albumData = snap.data();
+                  const updatedIslands = albumData.islands.filter(
+                    (i) => i.id !== island.id,
+                  );
+                  await setDoc(albumRef, {
+                    ...albumData,
+                    islands: updatedIslands,
+                  });
+                  setPlace({ ...albumData, islands: updatedIslands });
+                }}
+              />
             </div>
 
             {/* Locale cards */}
@@ -201,11 +220,36 @@ export default function AlbumView() {
                         color: "#888",
                         letterSpacing: "0.05em",
                         lineHeight: 1.5,
-                        margin: 0,
+                        margin: "0 0 0.75rem 0",
                       }}
                     >
                       {locale.mood}
                     </p>
+                    <DeleteButton
+                      label={locale.name}
+                      variant="text"
+                      onDelete={async () => {
+                        const albumRef = doc(db, "albums", albumId);
+                        const snap = await getDoc(albumRef);
+                        const albumData = snap.data();
+                        const updatedIslands = albumData.islands.map((isl) => {
+                          if (isl.id === island.id) {
+                            return {
+                              ...isl,
+                              locales: isl.locales.filter(
+                                (l) => l.id !== locale.id,
+                              ),
+                            };
+                          }
+                          return isl;
+                        });
+                        await setDoc(albumRef, {
+                          ...albumData,
+                          islands: updatedIslands,
+                        });
+                        setPlace({ ...albumData, islands: updatedIslands });
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -239,13 +283,14 @@ export default function AlbumView() {
                     color: "#888",
                   }}
                 >
-                  + Add Locale
+                  + Add Neighborhood
                 </span>
               </div>
             </div>
           </div>
         ))}
-        {/* Add Island button */}
+
+        {/* Add Area button */}
         <div
           onClick={() => setShowIslandModal(true)}
           style={{
@@ -271,7 +316,7 @@ export default function AlbumView() {
               color: "#888",
             }}
           >
-            + Add Region / Island
+            + Add Area
           </span>
         </div>
       </div>

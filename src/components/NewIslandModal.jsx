@@ -58,7 +58,7 @@ export default function NewIslandModal({ onClose, onSave }) {
               color: "#888",
             }}
           >
-            New Island / Region
+            New Local Region
           </span>
           <div style={{ flex: 1, height: "1px", background: "#C8C0B0" }} />
           <button
@@ -127,7 +127,7 @@ export default function NewIslandModal({ onClose, onSave }) {
               cursor: "pointer",
             }}
           >
-            Add Island
+            Add New Region
           </button>
           <button
             onClick={onClose}

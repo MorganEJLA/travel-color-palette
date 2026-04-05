@@ -78,7 +78,270 @@
             {
               "id": "terceira",
               "name": "Terceira",
-              "locales": []
+              "locales": [
+                {
+                  "id": "biscoitos",
+                  "name": "Biscoitos",
+                  "mood": "Black basalt lava fields meeting the open Atlantic. Natural tidal pools edged in acid-green algae, turquoise water crashing through volcanic rock. Raw and elemental.",
+                  "palette": [
+                    { "name": "Basalt Void", "hex": "#1a1a1f" },
+                    { "name": "Atlantic Turquoise", "hex": "#2a8fa8" },
+                    { "name": "Storm Atlantic", "hex": "#5a7a8a" },
+                    { "name": "Acid Algae", "hex": "#6abf3a" },
+                    { "name": "Seafoam", "hex": "#d4e8e8" }
+                  ],
+                  "fonts": {
+                    "display": "Josefin Sans",
+                    "displayWeight": "600",
+                    "body": "Merriweather",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Merriweather:wght@300;400;700&family=DM+Mono&display=swap",
+                    "note": "Stark and directional — like wayfinding cut into lava rock."
+                  }
+                },
+                {
+                  "id": "algar-do-carvao",
+                  "name": "Algar do Carvão",
+                  "mood": "A volcanic chimney open to the sky — fern-draped walls descending into darkness, moss-lit by filtered light from above. Subterranean and alive.",
+                  "palette": [
+                    { "name": "Chimney Fern", "hex": "#3a6b2a" },
+                    { "name": "Volcanic Dark", "hex": "#1a1a18" },
+                    { "name": "Cave Ochre", "hex": "#8a6a3a" },
+                    { "name": "Moss Light", "hex": "#6abf4a" },
+                    { "name": "Mineral Rust", "hex": "#8a3a2a" }
+                  ],
+                  "fonts": {
+                    "display": "Cormorant Garamond",
+                    "displayWeight": "600",
+                    "body": "Lora",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;500&family=DM+Mono&display=swap",
+                    "note": "Ancient and literary — light filtering down through deep time."
+                  }
+                },
+                {
+                  "id": "serra-do-cume",
+                  "name": "Serra do Cume",
+                  "mood": "The patchwork quilt viewpoint — a hundred shades of green divided by ancient stone walls, pastoral fields stretching to the Atlantic horizon. Orderly and infinite.",
+                  "palette": [
+                    { "name": "Pastoral Lime", "hex": "#8abf3a" },
+                    { "name": "Hedge Dark", "hex": "#2a4a1a" },
+                    { "name": "Harvest Gold", "hex": "#c8a83a" },
+                    { "name": "Atlantic Mist", "hex": "#8aaab8" },
+                    { "name": "Ploughed Earth", "hex": "#6a4a2a" }
+                  ],
+                  "fonts": {
+                    "display": "Playfair Display",
+                    "displayWeight": "400",
+                    "body": "Source Serif 4",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:wght@300;400;600&family=DM+Mono&display=swap",
+                    "note": "Editorial and pastoral — the geometry of fields seen from above."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sao-jorge",
+              "name": "São Jorge",
+              "locales": [
+                {
+                  "id": "ponta-dos-rosais",
+                  "name": "Ponta dos Rosais",
+                  "mood": "A dramatic headland at the island's western tip — iron-red volcanic sea stacks rising from deep cobalt water, abandoned lighthouse, grazing cattle on cliff-edge pasture. Exposed and elemental.",
+                  "palette": [
+                    { "name": "Rosais Cobalt", "hex": "#1a4a8a" },
+                    { "name": "Iron Cliff", "hex": "#8a3a20" },
+                    { "name": "Pasture Green", "hex": "#4a8a3a" },
+                    { "name": "Abandoned Concrete", "hex": "#a8a090" },
+                    { "name": "Red Earth Path", "hex": "#8a4a2a" }
+                  ],
+                  "fonts": {
+                    "display": "Josefin Sans",
+                    "displayWeight": "600",
+                    "body": "Merriweather",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Merriweather:wght@300;400;700&family=DM+Mono&display=swap",
+                    "note": "Stark and navigational — the end of the island, the edge of the world."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "north-america",
+      "region": "North America",
+      "places": [
+        {
+          "id": "los-angeles",
+          "name": "Los Angeles",
+          "country": "United States",
+          "islands": [
+            {
+              "id": "chinatown",
+              "name": "Chinatown",
+              "locales": [
+                {
+                  "id": "chinatown-la",
+                  "name": "Chinatown",
+                  "mood": "Red lanterns strung against a pale LA sky. Imperial yellow and lacquered red on pagoda rooflines, neon jade signs, the hum of a neighborhood holding its identity through decades of change.",
+                  "palette": [
+                    { "name": "Lantern Red", "hex": "#C8392A" },
+                    { "name": "Imperial Yellow", "hex": "#D4A820" },
+                    { "name": "Neon Jade", "hex": "#2ABF6A" },
+                    { "name": "Midnight Indigo", "hex": "#2D3550" },
+                    { "name": "Pale Sky", "hex": "#8BBCD4" }
+                  ],
+                  "fonts": {
+                    "display": "Cinzel",
+                    "displayWeight": "600",
+                    "body": "Nunito",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Nunito:wght@300;400;500&family=DM+Mono&display=swap",
+                    "note": "Imperial structure meets neighborhood warmth."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "leimert-park",
+              "name": "Leimert Park",
+              "locales": [
+                {
+                  "id": "leimert-park-la",
+                  "name": "Leimert Park",
+                  "mood": "The cultural heart of Black Los Angeles — Vision Theater marquee, stucco storefronts in sage and cream, Afrocentric murals and jazz drifting from open doors. Community as living archive.",
+                  "palette": [
+                    { "name": "Vision Theater Sage", "hex": "#7BA896" },
+                    { "name": "Stucco Cream", "hex": "#E8DCC8" },
+                    { "name": "Terracotta Heritage", "hex": "#C85A3A" },
+                    { "name": "Midnight Indigo", "hex": "#2A3450" },
+                    { "name": "Diaspora Ochre", "hex": "#C8882A" }
+                  ],
+                  "fonts": {
+                    "display": "Playfair Display",
+                    "displayWeight": "700",
+                    "body": "Source Sans 3",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&family=DM+Mono&display=swap",
+                    "note": "Editorial gravitas — the weight of cultural memory in a neighborhood."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "boyle-heights",
+              "name": "Boyle Heights",
+              "locales": [
+                {
+                  "id": "boyle-heights-la",
+                  "name": "Boyle Heights",
+                  "mood": "Mariachi Plaza at dusk, solar burst murals on corner walls, the bandstand's limestone columns against an East LA sky. Mexican folk art energy embedded in civic space — vivid, rooted, defiant.",
+                  "palette": [
+                    { "name": "Limestone Plaza", "hex": "#e8dcc8" },
+                    { "name": "Mural Solar", "hex": "#c8820a" },
+                    { "name": "Mural Cobalt", "hex": "#2a4a9a" },
+                    { "name": "Asphalt Night", "hex": "#1a1a20" },
+                    { "name": "Mural Red", "hex": "#c8392a" }
+                  ],
+                  "fonts": {
+                    "display": "Cormorant Garamond",
+                    "displayWeight": "700",
+                    "body": "Nunito",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Nunito:wght@300;400;500&family=DM+Mono&display=swap",
+                    "note": "Old world letterforms carrying new world urgency."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "new-orleans",
+          "name": "New Orleans",
+          "country": "United States",
+          "islands": [
+            {
+              "id": "french-quarter",
+              "name": "French Quarter",
+              "locales": [
+                {
+                  "id": "french-quarter-nola",
+                  "name": "French Quarter",
+                  "mood": "St. Louis Cathedral in celadon against a bruised sky, wrought iron lacework on every balcony, Preservation Hall amber leaking onto the street. The oldest neighborhood in the city — layered, faded, irreplaceable.",
+                  "palette": [
+                    { "name": "Cathedral Blanc", "hex": "#f0ede6" },
+                    { "name": "Cathedral Mint", "hex": "#5ab8a8" },
+                    { "name": "Vieux Carré Brick", "hex": "#c8503a" },
+                    { "name": "Wrought Iron", "hex": "#1a1a18" },
+                    { "name": "Preservation Amber", "hex": "#c8882a" }
+                  ],
+                  "fonts": {
+                    "display": "Cormorant Garamond",
+                    "displayWeight": "400",
+                    "body": "Lora",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;500&family=DM+Mono&display=swap",
+                    "note": "Old world elegance — type as worn and beautiful as the buildings."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "marigny",
+              "name": "Marigny",
+              "locales": [
+                {
+                  "id": "marigny-nola",
+                  "name": "Marigny",
+                  "mood": "Creole cottages painted in mint and violet, warm wood shutters, wrought iron scrollwork on every stoop. The artist district just downriver from the Quarter — louder, more alive, unapologetically colorful.",
+                  "palette": [
+                    { "name": "Shotgun Mint", "hex": "#d4ede8" },
+                    { "name": "Creole Teal", "hex": "#2a9a88" },
+                    { "name": "Bywater Violet", "hex": "#7a3ab8" },
+                    { "name": "Quarter Dark", "hex": "#1a1818" },
+                    { "name": "Shutter Gold", "hex": "#c8a030" }
+                  ],
+                  "fonts": {
+                    "display": "Playfair Display",
+                    "displayWeight": "700",
+                    "body": "Lato",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&family=DM+Mono&display=swap",
+                    "note": "Bold and expressive — the typography of a neighborhood that refuses to be quiet."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "treme",
+              "name": "Tremé",
+              "locales": [
+                {
+                  "id": "treme-nola",
+                  "name": "Tremé",
+                  "mood": "The oldest African American neighborhood in the country. Mustard yellow Creole cottages, slate blue doors, sage shutters, wrought iron railings draped in Spanish moss. History you can touch with your hands.",
+                  "palette": [
+                    { "name": "Revival Cream", "hex": "#f0e8d0" },
+                    { "name": "Creole Mustard", "hex": "#b8982a" },
+                    { "name": "Tremé Slate", "hex": "#6a8a9a" },
+                    { "name": "Wrought Iron", "hex": "#1a1a18" },
+                    { "name": "Gallery Red", "hex": "#b84a3a" }
+                  ],
+                  "fonts": {
+                    "display": "Libre Baskerville",
+                    "displayWeight": "400",
+                    "body": "Source Serif 4",
+                    "mono": "DM Mono",
+                    "googleUrl": "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@300;400;600&family=DM+Mono&display=swap",
+                    "note": "Dignified and weighted — type that carries the gravity of deep history."
+                  }
+                }
+              ]
             }
           ]
         }

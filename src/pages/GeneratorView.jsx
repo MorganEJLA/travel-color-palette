@@ -40,9 +40,13 @@ export default function GeneratorView() {
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
-
+  const MAX_IMAGES = 4;
   function handleImageUpload(e) {
-    setImages(Array.from(e.target.files));
+    if (e.target.files.length === 0) return;
+    setImages((prev) => {
+      const combined = [...prev, ...Array.from(e.target.files)];
+      return combined.slice(0, MAX_IMAGES); // cap at 4
+    });
   }
 
   async function toBase64(file) {
@@ -146,6 +150,17 @@ export default function GeneratorView() {
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(clean);
       setGeneratedLocale(parsed);
+      if (parsed.fonts?.googleUrl) {
+        const existing = document.querySelector(
+          `link[href="${parsed.fonts.googleUrl}"]`,
+        );
+        if (!existing) {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = parsed.fonts.googleUrl;
+          document.head.appendChild(link);
+        }
+      }
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Check the console for details.");
