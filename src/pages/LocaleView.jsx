@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -9,7 +9,7 @@ import GradientTool from "../components/GradientTool";
 import FontPairingPanel from "../components/FontPairingPanel";
 import StylePreview from "../components/StylePreview";
 import Footer from "../components/Footer";
-
+import TopBanner from "../components/TopBanner";
 function loadFont(googleUrl) {
   const existing = document.querySelector(`link[href="${googleUrl}"]`);
   if (existing) return;
@@ -21,7 +21,7 @@ function loadFont(googleUrl) {
 
 export default function LocaleView() {
   const { albumId, islandId, localeId } = useParams();
-  const navigate = useNavigate();
+
   const [locale, setLocale] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -83,42 +83,7 @@ export default function LocaleView() {
       }}
     >
       {/* TOP BANNER */}
-      <div
-        style={{
-          background: "#1A1A18",
-          padding: "0.4rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <button
-          onClick={() => navigate(`/${albumId}`)}
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          ← {locale.placeName}
-        </button>
-        <span
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-          }}
-        >
-          Chromaterra
-        </span>
-      </div>
+      <TopBanner leftText="← Back" leftTo={`/${albumId}`} />
 
       {/* HERO */}
       <LocaleHero locale={locale} />

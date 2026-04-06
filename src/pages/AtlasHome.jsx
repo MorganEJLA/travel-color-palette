@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, doc, setDoc } from "firebase/firestore";
-
+import TopBanner from "../components/TopBanner";
 import NewAlbumModal from "../components/NewAlbumModal";
 
 export default function AtlasHome() {
@@ -62,38 +62,7 @@ export default function AtlasHome() {
       }}
     >
       {/* TOP BANNER */}
-      <div
-        style={{
-          background: "#1A1A18",
-          padding: "0.4rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-          }}
-        >
-          Est. 2025 — Global Aesthetic Reference
-        </span>
-        <span
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-          }}
-        >
-          Chromaterra
-        </span>
-      </div>
+      <TopBanner />
 
       {/* HEADER */}
       <div style={{ padding: "3rem 2.5rem 2rem" }}>

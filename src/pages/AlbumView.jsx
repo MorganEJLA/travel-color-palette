@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import NewIslandModal from "../components/NewIslandModal";
 import DeleteButton from "../components/DeleteButton";
+import TopBanner from "../components/TopBanner";
 
 export default function AlbumView() {
   const { albumId } = useParams();
@@ -55,42 +56,7 @@ export default function AlbumView() {
       }}
     >
       {/* TOP BANNER */}
-      <div
-        style={{
-          background: "#1A1A18",
-          padding: "0.4rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          ← My Atlas
-        </button>
-        <span
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-          }}
-        >
-          Chromaterra
-        </span>
-      </div>
+      <TopBanner leftText="← My Atlas" leftTo="/atlas" />
 
       {/* ALBUM HEADER */}
       <div
