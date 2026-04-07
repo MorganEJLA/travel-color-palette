@@ -15,6 +15,12 @@ export default function TopBanner({
 
   return (
     <>
+      <style>{`
+        @media (max-width: 600px) {
+          .banner-left { display: none; }
+          .banner-username { display: none; }
+        }
+      `}</style>
       <div
         style={{
           background: "#1A1A18",
@@ -26,6 +32,7 @@ export default function TopBanner({
       >
         {leftTo ? (
           <button
+            className="banner-left"
             onClick={() => navigate(leftTo)}
             style={{
               fontFamily: "'DM Mono', monospace",
@@ -42,6 +49,7 @@ export default function TopBanner({
           </button>
         ) : (
           <span
+            className="banner-left"
             style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: "0.6rem",
@@ -57,6 +65,7 @@ export default function TopBanner({
         <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
           {user && (
             <span
+              className="banner-username"
               style={{
                 fontFamily: "'DM Mono', monospace",
                 fontSize: "0.6rem",

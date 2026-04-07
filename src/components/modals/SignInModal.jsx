@@ -1,26 +1,33 @@
-import { signInWithPopup } from "firebase/auth";
+import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase";
-
+import { useEffect } from "react";
 
 export default function SignInModal({ onClose, onSuccess }) {
-  async function handleGoogleSignIn() {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const authorizedEmail = import.meta.env.VITE_AUTHORIZED_EMAIL;
-
-      if (result.user.email !== authorizedEmail) {
-        await auth.signOut();
-        alert("Access is restricted. This atlas is private.");
-        return;
+  useEffect(() => {
+    async function checkRedirect() {
+      try {
+        const result = await getRedirectResult(auth);
+        if (!result) return;
+        const authorizedEmail = import.meta.env.VITE_AUTHORIZED_EMAIL;
+        if (result.user.email !== authorizedEmail) {
+          await auth.signOut();
+          alert("Access is restricted. This atlas is private.");
+          return;
+        }
+        onSuccess(result.user);
+        onClose();
+      } catch (err) {
+        console.error("Redirect sign in failed:", err);
       }
-
-      onSuccess(result.user);
-      onClose();
-    } catch (err) {
-      console.error("Sign in failed:", err);
     }
+    checkRedirect();
+  }, [onClose, onSuccess]);
+
+  async function handleGoogleSignIn() {
+    await signInWithRedirect(auth, googleProvider);
   }
 
+  // rest of the return JSX stays exactly the same
   return (
     <div
       onClick={onClose}
