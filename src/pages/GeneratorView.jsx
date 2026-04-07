@@ -135,7 +135,7 @@ export default function GeneratorView() {
     - Mood should be evocative and under 30 words
     - Return ONLY the JSON, nothing else`;
 
-      const response = await fetch("/api/anthropic/v1/messages", {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
