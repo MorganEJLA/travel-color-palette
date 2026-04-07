@@ -46,8 +46,8 @@ export default function GeneratorView() {
     if (e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
     const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1280,
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 800,
       useWebWorker: true,
     };
     const compressed = await Promise.all(
