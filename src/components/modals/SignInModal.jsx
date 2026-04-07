@@ -1,28 +1,7 @@
-import { signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithRedirect } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase";
-import { useEffect } from "react";
 
-export default function SignInModal({ onClose, onSuccess }) {
-  useEffect(() => {
-    async function checkRedirect() {
-      try {
-        const result = await getRedirectResult(auth);
-        if (!result) return;
-        const authorizedEmail = import.meta.env.VITE_AUTHORIZED_EMAIL;
-        if (result.user.email !== authorizedEmail) {
-          await auth.signOut();
-          alert("Access is restricted. This atlas is private.");
-          return;
-        }
-        onSuccess(result.user);
-        onClose();
-      } catch (err) {
-        console.error("Redirect sign in failed:", err);
-      }
-    }
-    checkRedirect();
-  }, [onClose, onSuccess]);
-
+export default function SignInModal({ onClose }) {
   async function handleGoogleSignIn() {
     await signInWithRedirect(auth, googleProvider);
   }
