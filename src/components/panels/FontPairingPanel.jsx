@@ -75,7 +75,7 @@ export default function FontPairingPanel({ locale }) {
                   fontSize: "0.55rem",
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  color: "#888",
+                  color: "#a7a4a4",
                 }}
               >
                 {f.role}
