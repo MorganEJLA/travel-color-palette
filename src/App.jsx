@@ -4,6 +4,8 @@ import AtlasHome from "./pages/AtlasHome";
 import AlbumView from "./pages/AlbumView";
 import LocaleView from "./pages/LocaleView";
 import GeneratorView from "./pages/GeneratorView";
+import UserProfile from "./pages/UserProfile";
+import UserLocaleView from "./pages/UserLocaleView";
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
           path="/:albumId/:islandId/generate"
           element={<GeneratorView />}
         />
+        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/profile/:localeId" element={<UserLocaleView />} />
       </Routes>
     </BrowserRouter>
   );

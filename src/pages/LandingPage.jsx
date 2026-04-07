@@ -1,11 +1,13 @@
 import { useState } from "react";
-import SignInModal from "../components/SignInModal";
+import SignInModal from "../components/modals/SignInModal";
 import { useNavigate } from "react-router-dom";
 import landingImage from "../img/LandingPageEllipses.svg";
+import { useAuth } from "../hooks/useAuth";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [showSignIn, setShowSignIn] = useState(false);
+  const { user } = useAuth();
   return (
     <div
       style={{
@@ -69,21 +71,39 @@ export default function LandingPage() {
           >
             Atlas
           </button>
-          <button
-            onClick={() => setShowSignIn(true)}
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.58rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "#999",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Sign In
-          </button>
+          {user ? (
+            <button
+              onClick={() => navigate("/profile")}
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "0.58rem",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "#999",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              My Profile
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowSignIn(true)}
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "0.58rem",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "#999",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Sign In
+            </button>
+          )}
         </div>
       </nav>
 
@@ -235,8 +255,7 @@ export default function LandingPage() {
       {showSignIn && (
         <SignInModal
           onClose={() => setShowSignIn(false)}
-          onSuccess={(user) => {
-            console.log("Signed in as:", user.email);
+          onSuccess={() => {
             navigate("/atlas");
           }}
         />

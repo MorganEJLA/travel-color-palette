@@ -3,13 +3,13 @@ import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-import LocaleHero from "../components/LocaleHero";
-import PalettePanel from "../components/PalettePanel";
-import GradientTool from "../components/GradientTool";
-import FontPairingPanel from "../components/FontPairingPanel";
+import LocaleHero from "../components/layout/LocaleHero";
+import PalettePanel from "../components/panels/PalettePanel";
+import GradientTool from "../components/panels/GradientTool";
+import FontPairingPanel from "../components/panels/FontPairingPanel";
 import StylePreview from "../components/StylePreview";
-import Footer from "../components/Footer";
-import TopBanner from "../components/TopBanner";
+import Footer from "../components/layout/Footer";
+import TopBanner from "../components/layout/TopBanner";
 function loadFont(googleUrl) {
   const existing = document.querySelector(`link[href="${googleUrl}"]`);
   if (existing) return;

@@ -1,4 +1,4 @@
-import CopyButton from "./CopyButton";
+import CopyButton from "../buttons/CopyButton";
 
 export default function FontPairingPanel({ locale }) {
   return (

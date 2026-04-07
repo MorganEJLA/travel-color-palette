@@ -1,9 +1,10 @@
-import IconX from "./icons/IconX";
+import IconX from "../icons/IconX";
 
 export default function DeleteButton({
   onDelete,
   label = "Delete",
   variant = "icon",
+  style: styleProp = {},
 }) {
   return (
     <button
@@ -27,6 +28,7 @@ export default function DeleteButton({
         textTransform: "uppercase",
         color: "#aaa",
         textDecoration: variant === "text" ? "underline" : "none",
+        ...styleProp,
       }}
       onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
       onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}

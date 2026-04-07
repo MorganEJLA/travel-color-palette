@@ -2,13 +2,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import NewIslandModal from "../components/NewIslandModal";
-import DeleteButton from "../components/DeleteButton";
-import TopBanner from "../components/TopBanner";
+import NewIslandModal from "../components/modals/NewIslandModal";
+import DeleteButton from "../components/buttons/DeleteButton";
+import TopBanner from "../components/layout/TopBanner";
+import { useAuth } from "../hooks/useAuth";
+import { useAuthGate } from "../hooks/useAuthGate";
 
 export default function AlbumView() {
   const { albumId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { authGate, SignInGate } = useAuthGate();
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showIslandModal, setShowIslandModal] = useState(false);
@@ -55,10 +59,8 @@ export default function AlbumView() {
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
       }}
     >
-      {/* TOP BANNER */}
-      <TopBanner leftText="← My Atlas" leftTo="/atlas" />
+      <TopBanner leftText="← My Atlas" leftTo="/atlas" onSignOut={() => {}} />
 
-      {/* ALBUM HEADER */}
       <div
         style={{
           padding: "3rem 2.5rem 2rem",
@@ -91,11 +93,9 @@ export default function AlbumView() {
         </h1>
       </div>
 
-      {/* ISLANDS + LOCALES */}
       <div style={{ padding: "2.5rem" }}>
         {place.islands.map((island) => (
           <div key={island.id} style={{ marginBottom: "3rem" }}>
-            {/* Island header */}
             <div
               style={{
                 display: "flex",
@@ -116,25 +116,26 @@ export default function AlbumView() {
                 {island.name}
               </span>
               <div style={{ flex: 1, height: "1px", background: "#C8C0B0" }} />
-              <DeleteButton
-                label={island.name}
-                onDelete={async () => {
-                  const albumRef = doc(db, "albums", albumId);
-                  const snap = await getDoc(albumRef);
-                  const albumData = snap.data();
-                  const updatedIslands = albumData.islands.filter(
-                    (i) => i.id !== island.id,
-                  );
-                  await setDoc(albumRef, {
-                    ...albumData,
-                    islands: updatedIslands,
-                  });
-                  setPlace({ ...albumData, islands: updatedIslands });
-                }}
-              />
+              {user && (
+                <DeleteButton
+                  label={island.name}
+                  onDelete={async () => {
+                    const albumRef = doc(db, "albums", albumId);
+                    const snap = await getDoc(albumRef);
+                    const albumData = snap.data();
+                    const updatedIslands = albumData.islands.filter(
+                      (i) => i.id !== island.id,
+                    );
+                    await setDoc(albumRef, {
+                      ...albumData,
+                      islands: updatedIslands,
+                    });
+                    setPlace({ ...albumData, islands: updatedIslands });
+                  }}
+                />
+              )}
             </div>
 
-            {/* Locale cards */}
             <div
               style={{
                 display: "grid",
@@ -191,38 +192,43 @@ export default function AlbumView() {
                     >
                       {locale.mood}
                     </p>
-                    <DeleteButton
-                      label={locale.name}
-                      variant="text"
-                      onDelete={async () => {
-                        const albumRef = doc(db, "albums", albumId);
-                        const snap = await getDoc(albumRef);
-                        const albumData = snap.data();
-                        const updatedIslands = albumData.islands.map((isl) => {
-                          if (isl.id === island.id) {
-                            return {
-                              ...isl,
-                              locales: isl.locales.filter(
-                                (l) => l.id !== locale.id,
-                              ),
-                            };
-                          }
-                          return isl;
-                        });
-                        await setDoc(albumRef, {
-                          ...albumData,
-                          islands: updatedIslands,
-                        });
-                        setPlace({ ...albumData, islands: updatedIslands });
-                      }}
-                    />
+                    {user && (
+                      <DeleteButton
+                        label={locale.name}
+                        variant="text"
+                        onDelete={async () => {
+                          const albumRef = doc(db, "albums", albumId);
+                          const snap = await getDoc(albumRef);
+                          const albumData = snap.data();
+                          const updatedIslands = albumData.islands.map(
+                            (isl) => {
+                              if (isl.id === island.id) {
+                                return {
+                                  ...isl,
+                                  locales: isl.locales.filter(
+                                    (l) => l.id !== locale.id,
+                                  ),
+                                };
+                              }
+                              return isl;
+                            },
+                          );
+                          await setDoc(albumRef, {
+                            ...albumData,
+                            islands: updatedIslands,
+                          });
+                          setPlace({ ...albumData, islands: updatedIslands });
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               ))}
 
-              {/* Add locale card */}
               <div
-                onClick={() => navigate(`/${albumId}/${island.id}/generate`)}
+                onClick={() =>
+                  authGate(() => navigate(`/${albumId}/${island.id}/generate`))
+                }
                 style={{
                   border: "1px dashed #C8C0B0",
                   background: "transparent",
@@ -256,9 +262,8 @@ export default function AlbumView() {
           </div>
         ))}
 
-        {/* Add Area button */}
         <div
-          onClick={() => setShowIslandModal(true)}
+          onClick={() => authGate(() => setShowIslandModal(true))}
           style={{
             border: "1px dashed #C8C0B0",
             background: "transparent",
@@ -301,6 +306,8 @@ export default function AlbumView() {
           }}
         />
       )}
+
+      <SignInGate />
     </div>
   );
 }

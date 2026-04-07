@@ -1,15 +1,25 @@
+import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
-import TopBanner from "../components/TopBanner";
-import NewAlbumModal from "../components/NewAlbumModal";
+import {
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import TopBanner from "../components/layout/TopBanner";
+import NewAlbumModal from "../components/modals/NewAlbumModal";
+import DeleteButton from "../components/buttons/DeleteButton";
 
 export default function AtlasHome() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [albums, setAlbums] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     async function fetchAlbums() {
       const snapshot = await getDocs(collection(db, "albums"));
@@ -52,6 +62,7 @@ export default function AtlasHome() {
         Loading...
       </div>
     );
+
   return (
     <div
       style={{
@@ -61,10 +72,8 @@ export default function AtlasHome() {
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
       }}
     >
-      {/* TOP BANNER */}
-      <TopBanner />
+      <TopBanner onSignOut={() => {}} />
 
-      {/* HEADER */}
       <div style={{ padding: "3rem 2.5rem 2rem" }}>
         <p
           style={{
@@ -100,7 +109,6 @@ export default function AtlasHome() {
         />
       </div>
 
-      {/* ALBUM GRID */}
       <div
         style={{
           padding: "0 2.5rem 2.5rem",
@@ -167,82 +175,73 @@ export default function AtlasHome() {
               >
                 {album.localeCount} locale{album.localeCount !== 1 ? "s" : ""}
               </p>
-              <button
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  if (!confirm(`Delete ${album.name}?`)) return;
-                  const { deleteDoc, doc } = await import("firebase/firestore");
-                  await deleteDoc(doc(db, "albums", album.id));
-                  setAlbums((prev) => prev.filter((a) => a.id !== album.id));
-                }}
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  background: "transparent",
-                  border: "none",
-                  color: "#aaa",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                  padding: 0,
-                  display: "block",
-                }}
-              >
-                Delete
-              </button>
+              {user && (
+                <DeleteButton
+                  label={album.name}
+                  variant="text"
+                  onDelete={async () => {
+                    await deleteDoc(doc(db, "albums", album.id));
+                    setAlbums((prev) => prev.filter((a) => a.id !== album.id));
+                  }}
+                />
+              )}
             </div>
           </div>
         ))}
 
-        {/* New Album card */}
-        <div
-          onClick={() => setShowModal(true)}
-          style={{
-            border: "1px dashed #C8C0B0",
-            background: "transparent",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "120px",
-            padding: "1.25rem",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#1A1A18")}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#C8C0B0")}
-        >
-          <span
+        {user && (
+          <div
+            onClick={() => setShowModal(true)}
             style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#888",
+              border: "1px dashed #C8C0B0",
+              background: "transparent",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "120px",
+              padding: "1.25rem",
             }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "#1A1A18")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "#C8C0B0")
+            }
           >
-            + New Album
-          </span>
-        </div>
-      </div>
+            <span
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "0.6rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#888",
+              }}
+            >
+              + New Album
+            </span>
+          </div>
+        )}
 
-      {showModal && (
-        <NewAlbumModal
-          onClose={() => setShowModal(false)}
-          onSave={async (newAlbum) => {
-            await setDoc(doc(db, "albums", newAlbum.id), newAlbum);
-            setAlbums((prev) => [
-              ...prev,
-              {
-                id: newAlbum.id,
-                name: newAlbum.name,
-                country: newAlbum.country,
-                localeCount: 0,
-                previewColors: [],
-              },
-            ]);
-          }}
-        />
-      )}
+        {showModal && (
+          <NewAlbumModal
+            onClose={() => setShowModal(false)}
+            onSave={async (newAlbum) => {
+              await setDoc(doc(db, "albums", newAlbum.id), newAlbum);
+              setAlbums((prev) => [
+                ...prev,
+                {
+                  id: newAlbum.id,
+                  name: newAlbum.name,
+                  country: newAlbum.country,
+                  localeCount: 0,
+                  previewColors: [],
+                },
+              ]);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -3,11 +3,11 @@ import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import TopBanner from "../components/TopBanner";
-import LocaleHero from "../components/LocaleHero";
-import PalettePanel from "../components/PalettePanel";
-import GradientTool from "../components/GradientTool";
-import FontPairingPanel from "../components/FontPairingPanel";
+import TopBanner from "../components/layout/TopBanner";
+import LocaleHero from "../components/layout/LocaleHero";
+import PalettePanel from "../components/panels/PalettePanel";
+import GradientTool from "../components/panels/GradientTool";
+import FontPairingPanel from "../components/panels/FontPairingPanel";
 import { FONT_PAIRS } from "../data/fontPairs";
 
 export default function GeneratorView() {
@@ -435,36 +435,24 @@ export default function GeneratorView() {
             <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
               <button
                 onClick={async () => {
-                  const albumRef = doc(db, "albums", albumId);
-                  const albumSnap = await getDoc(albumRef);
-                  const albumData = albumSnap.data();
-
-                  const updatedIslands = albumData.islands.map((island) => {
-                    if (island.id === islandId) {
-                      return {
-                        ...island,
-                        locales: [...island.locales, generatedLocale],
-                      };
-                    }
-                    return island;
+                  const { getAuth } = await import("firebase/auth");
+                  const currentUser = getAuth().currentUser;
+                  if (!currentUser) {
+                    alert("You need to be signed in to save.");
+                    return;
+                  }
+                  const userLocaleRef = doc(
+                    db,
+                    "users",
+                    currentUser.uid,
+                    "generatedLocales",
+                    generatedLocale.id,
+                  );
+                  await setDoc(userLocaleRef, {
+                    ...generatedLocale,
+                    savedAt: new Date().toISOString(),
                   });
-
-                  await setDoc(albumRef, {
-                    ...albumData,
-                    islands: updatedIslands,
-                  });
-                  navigate(`/${albumId}`);
-                }}
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  padding: "0.75rem 2rem",
-                  background: "#3d5941",
-                  color: "#F0EBE0",
-                  border: "none",
-                  cursor: "pointer",
+                  navigate("/profile");
                 }}
               >
                 Save to Atlas

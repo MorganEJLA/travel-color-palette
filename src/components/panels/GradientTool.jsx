@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CopyButton from "./CopyButton";
+import CopyButton from "../buttons/CopyButton";
 
 export default function GradientTool({ locale }) {
   const palette = locale.palette;
