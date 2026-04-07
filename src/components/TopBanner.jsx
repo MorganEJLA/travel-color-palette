@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import ChromaterraWordmark from "./ChromaterraWordmark";
 
 export default function TopBanner({
   leftText = "Est. 2025 — Global Aesthetic Reference",
   leftTo = null,
 }) {
   const navigate = useNavigate();
+  const { user, signOutUser } = useAuth();
 
   return (
     <div
@@ -45,21 +48,40 @@ export default function TopBanner({
           {leftText}
         </span>
       )}
-      <button
-        onClick={() => navigate("/")}
-        style={{
-          fontFamily: "'DM Mono', monospace",
-          fontSize: "0.6rem",
-          letterSpacing: "0.2em",
-          color: "#888",
-          textTransform: "uppercase",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Chromaterra
-      </button>
+
+      <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+        {user && (
+          <span
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.6rem",
+              letterSpacing: "0.2em",
+              color: "#666",
+              textTransform: "uppercase",
+            }}
+          >
+            {user.displayName || user.email}
+          </span>
+        )}
+        {user ? (
+          <button
+            onClick={signOutUser}
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.6rem",
+              letterSpacing: "0.2em",
+              color: "#888",
+              textTransform: "uppercase",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Sign Out
+          </button>
+        ) : null}
+        <ChromaterraWordmark color="#888" />
+      </div>
     </div>
   );
 }

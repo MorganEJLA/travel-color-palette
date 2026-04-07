@@ -1,9 +1,11 @@
+import { useState } from "react";
+import SignInModal from "../components/SignInModal";
 import { useNavigate } from "react-router-dom";
 import landingImage from "../img/LandingPageEllipses.svg";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-
+  const [showSignIn, setShowSignIn] = useState(false);
   return (
     <div
       style={{
@@ -68,6 +70,7 @@ export default function LandingPage() {
             Atlas
           </button>
           <button
+            onClick={() => setShowSignIn(true)}
             style={{
               fontFamily: "'DM Mono', monospace",
               fontSize: "0.58rem",
@@ -91,8 +94,8 @@ export default function LandingPage() {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           alignItems: "center",
-          padding: "1rem 2.5rem 2rem",
-          gap: "2rem",
+          padding: "1rem 2.5rem 2rem 3.5rem",
+          gap: "1.5rem",
         }}
       >
         {/* Left — copy */}
@@ -175,21 +178,6 @@ export default function LandingPage() {
           >
             Start Your Atlas →
           </button>
-          <button
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.55rem",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "#aaa",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-          >
-            Already have an account? Sign in
-          </button>
         </div>
 
         {/* Right — illustration */}
@@ -244,6 +232,15 @@ export default function LandingPage() {
           Vol. I
         </span>
       </footer>
+      {showSignIn && (
+        <SignInModal
+          onClose={() => setShowSignIn(false)}
+          onSuccess={(user) => {
+            console.log("Signed in as:", user.email);
+            navigate("/atlas");
+          }}
+        />
+      )}
     </div>
   );
 }
