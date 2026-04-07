@@ -41,7 +41,7 @@ export default function GeneratorView() {
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
-  const MAX_IMAGES = 8;
+  const MAX_IMAGES = 5;
   async function handleImageUpload(e) {
     if (e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
@@ -155,6 +155,7 @@ export default function GeneratorView() {
       });
 
       const data = await response.json();
+      console.log("API response:", JSON.stringify(data));
       const text = data.content[0].text;
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(clean);
