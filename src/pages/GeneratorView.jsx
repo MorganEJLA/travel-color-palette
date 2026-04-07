@@ -1,8 +1,9 @@
+import imageCompression from "browser-image-compression";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
+import TopBanner from "../components/TopBanner";
 import LocaleHero from "../components/LocaleHero";
 import PalettePanel from "../components/PalettePanel";
 import GradientTool from "../components/GradientTool";
@@ -12,7 +13,7 @@ import { FONT_PAIRS } from "../data/fontPairs";
 export default function GeneratorView() {
   const { albumId, islandId } = useParams();
   const navigate = useNavigate();
-
+  const fileInputRef = useRef(null);
   const [place, setPlace] = useState(null);
   const [island, setIsland] = useState(null);
   const [fontMood, setFontMood] = useState("Serif & Classic");
@@ -40,12 +41,21 @@ export default function GeneratorView() {
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
-  const MAX_IMAGES = 4;
-  function handleImageUpload(e) {
+  const MAX_IMAGES = 8;
+  async function handleImageUpload(e) {
     if (e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1280,
+      useWebWorker: true,
+    };
+    const compressed = await Promise.all(
+      files.map((f) => imageCompression(f, options)),
+    );
     setImages((prev) => {
-      const combined = [...prev, ...Array.from(e.target.files)];
-      return combined.slice(0, MAX_IMAGES); // cap at 4
+      const combined = [...prev, ...compressed];
+      return combined.slice(0, MAX_IMAGES);
     });
   }
 
@@ -179,42 +189,7 @@ export default function GeneratorView() {
       }}
     >
       {/* TOP BANNER */}
-      <div
-        style={{
-          background: "#1A1A18",
-          padding: "0.4rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <button
-          onClick={() => navigate(`/${albumId}`)}
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          ← {place?.name}
-        </button>
-        <span
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            color: "#888",
-            textTransform: "uppercase",
-          }}
-        >
-          Chromaterra
-        </span>
-      </div>
+      <TopBanner leftText={`← ${place?.name}`} leftTo={`/${albumId}`} />
 
       <div style={{ padding: "2.5rem", maxWidth: "1200px" }}>
         {/* Header */}
@@ -323,6 +298,7 @@ export default function GeneratorView() {
             Reference Images
           </label>
           <input
+            ref={fileInputRef}
             type="file"
             accept="image/*"
             multiple
@@ -334,28 +310,59 @@ export default function GeneratorView() {
             }}
           />
           {images.length > 0 && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginTop: "0.4rem",
-              }}
-            >
-              <p
+            <div style={{ marginTop: "0.75rem" }}>
+              <div
                 style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.6rem",
-                  color: "#888",
-                  margin: 0,
+                  display: "flex",
+                  gap: "0.5rem",
+                  flexWrap: "wrap",
+                  marginBottom: "0.5rem",
                 }}
               >
-                {images.length} image{images.length > 1 ? "s" : ""} selected
-              </p>
+                {images.map((file, i) => (
+                  <div key={i} style={{ position: "relative" }}>
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`upload ${i + 1}`}
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        setImages((prev) => {
+                          const updated = prev.filter((_, idx) => idx !== i);
+                          if (updated.length === 0 && fileInputRef.current) {
+                            fileInputRef.current.value = "";
+                          }
+                          return updated;
+                        });
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: "2px",
+                        right: "2px",
+                        background: "#1A1A18",
+                        color: "#F0EBE0",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "0.55rem",
+                        padding: "2px 5px",
+                        lineHeight: 1,
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
               <button
                 onClick={() => {
                   setImages([]);
-                  document.querySelector("input[type='file']").value = "";
+                  if (fileInputRef.current) fileInputRef.current.value = "";
                 }}
                 style={{
                   fontFamily: "'DM Mono', monospace",
@@ -369,7 +376,7 @@ export default function GeneratorView() {
                   textDecoration: "underline",
                 }}
               >
-                Clear
+                Clear All
               </button>
             </div>
           )}
