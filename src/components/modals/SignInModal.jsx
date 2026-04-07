@@ -1,12 +1,25 @@
-import { signInWithRedirect } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase";
 
-export default function SignInModal({ onClose }) {
+export default function SignInModal({ onClose, onSuccess }) {
   async function handleGoogleSignIn() {
-    await signInWithRedirect(auth, googleProvider);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const authorizedEmail = import.meta.env.VITE_AUTHORIZED_EMAIL;
+
+      if (result.user.email !== authorizedEmail) {
+        await auth.signOut();
+        alert("Access is restricted. This atlas is private.");
+        return;
+      }
+
+      onSuccess(result.user);
+      onClose();
+    } catch (err) {
+      console.error("Sign in failed:", err);
+    }
   }
 
-  // rest of the return JSX stays exactly the same
   return (
     <div
       onClick={onClose}
