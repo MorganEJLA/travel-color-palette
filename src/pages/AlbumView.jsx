@@ -7,7 +7,7 @@ import DeleteButton from "../components/buttons/DeleteButton";
 import TopBanner from "../components/layout/TopBanner";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthGate } from "../hooks/useAuthGate";
-
+import NotFound from "./NotFound";
 export default function AlbumView() {
   const { albumId } = useParams();
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function AlbumView() {
       </div>
     );
 
-  if (!place) return <p>Album not found.</p>;
+  if (!place) return <NotFound />;
 
   return (
     <div

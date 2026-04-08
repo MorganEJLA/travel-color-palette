@@ -6,7 +6,7 @@ import LocaleView from "./pages/LocaleView";
 import GeneratorView from "./pages/GeneratorView";
 import UserProfile from "./pages/UserProfile";
 import UserLocaleView from "./pages/UserLocaleView";
-
+import NotFound from "./pages/NotFound";
 export default function App() {
   return (
     <BrowserRouter>
@@ -21,6 +21,7 @@ export default function App() {
         />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/profile/:localeId" element={<UserLocaleView />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
