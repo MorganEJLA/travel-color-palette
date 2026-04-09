@@ -432,6 +432,9 @@ export default function GeneratorView() {
               <PalettePanel locale={generatedLocale} />
               <GradientTool locale={generatedLocale} />
               <FontPairingPanel locale={generatedLocale} />
+             
+            </div>
+            <div style={{ marginTop: "2rem" }}>
               <StylePreview locale={generatedLocale} />
             </div>
 
