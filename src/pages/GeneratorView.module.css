@@ -1,0 +1,187 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+}
+
+.content {
+  padding: 2.5rem;
+  max-width: 1200px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pageHeaderLabel {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.pageHeaderDivider {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  box-sizing: border-box;
+}
+
+.select {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  box-sizing: border-box;
+}
+
+.uploadGroup {
+  margin-bottom: 1.5rem;
+}
+
+.fileInput {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink);
+}
+
+.imagePreviews {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.imageThumb {
+  position: relative;
+}
+
+.imageThumb img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  display: block;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  border: none;
+  cursor: pointer;
+  font-size: 0.55rem;
+  padding: 2px 5px;
+  line-height: 1;
+}
+
+.clearBtn {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.generateBtn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  border: none;
+  cursor: pointer;
+  margin-bottom: 2.5rem;
+}
+
+.generateBtn:disabled {
+  background: var(--color-muted);
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+.stylePreviewWrap {
+  margin-top: 2rem;
+}
+
+.saveRow {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.saveBtn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  border: none;
+  cursor: pointer;
+}
+
+.editBtn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.75rem 2rem;
+  background: transparent;
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}

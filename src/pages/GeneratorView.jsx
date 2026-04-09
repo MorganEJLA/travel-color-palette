@@ -9,11 +9,15 @@ import PalettePanel from "../components/panels/PalettePanel";
 import GradientTool from "../components/panels/GradientTool";
 import StylePreview from "../components/StylePreview";
 import FontPairingPanel from "../components/panels/FontPairingPanel";
+import styles from "./GeneratorView.module.css";
 import { FONT_PAIRS } from "../data/fontPairs";
+import { loadFont } from "../utils/loadFont";
+import { useAuth } from "../hooks/useAuth";
 
 export default function GeneratorView() {
   const { albumId, islandId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
   const [place, setPlace] = useState(null);
   const [island, setIsland] = useState(null);
@@ -26,23 +30,31 @@ export default function GeneratorView() {
     name: "",
   });
   const [generateCount, setGenerateCount] = useState(0);
-  const MAX_GENERATES = 3;
+  const MAX_GENERATES = 5;
+  const MAX_IMAGES = 7;
+
   useEffect(() => {
     async function fetchAlbum() {
-      const snap = await getDoc(doc(db, "albums", albumId));
-      if (snap.exists()) {
-        const albumData = snap.data();
-        setPlace(albumData);
-        const foundIsland = albumData.islands.find((i) => i.id === islandId);
-        setIsland(foundIsland);
+      try {
+        const snap = await getDoc(doc(db, "albums", albumId));
+        if (snap.exists()) {
+          const albumData = snap.data();
+          setPlace(albumData);
+          const foundIsland = albumData.islands.find((i) => i.id === islandId);
+          setIsland(foundIsland);
+        }
+      } catch (err) {
+        console.error("Failed to fetch album:", err);
+        setError("Failed to load album data");
       }
     }
     fetchAlbum();
   }, [albumId, islandId]);
+
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
-  const MAX_IMAGES = 5;
+
   async function handleImageUpload(e) {
     if (e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
@@ -70,7 +82,6 @@ export default function GeneratorView() {
   }
 
   async function handleGenerate() {
-    
     if (generateCount >= MAX_GENERATES) {
       setError("Maximum generations reached for this session.");
       return;
@@ -164,17 +175,7 @@ export default function GeneratorView() {
       const clean = text.replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(clean);
       setGeneratedLocale(parsed);
-      if (parsed.fonts?.googleUrl) {
-        const existing = document.querySelector(
-          `link[href="${parsed.fonts.googleUrl}"]`,
-        );
-        if (!existing) {
-          const link = document.createElement("link");
-          link.rel = "stylesheet";
-          link.href = parsed.fonts.googleUrl;
-          document.head.appendChild(link);
-        }
-      }
+      if (parsed.fonts?.googleUrl) loadFont(parsed.fonts.googleUrl);
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Check the console for details.");
@@ -182,102 +183,55 @@ export default function GeneratorView() {
     setGenerateCount((prev) => prev + 1);
     setLoading(false);
   }
-
+  async function handleSave() {
+    if (!user) {
+      setError("You need to be signed in to save.");
+      return;
+    }
+    const userLocaleRef = doc(
+      db,
+      "users",
+      user.uid,
+      "generatedLocales",
+      generatedLocale.id,
+    );
+    await setDoc(userLocaleRef, {
+      ...generatedLocale,
+      savedAt: new Date().toISOString(),
+    });
+    navigate("/profile");
+  }
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F0EBE0",
-        fontFamily: "'Montserrat', sans-serif",
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
-      }}
-    >
-      {/* TOP BANNER */}
+    <div className={styles.page}>
       <TopBanner leftText={`← ${place?.name}`} leftTo={`/${albumId}`} />
 
-      <div style={{ padding: "2.5rem", maxWidth: "1200px" }}>
+      <div className={styles.content}>
         {/* Header */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-            marginBottom: "2rem",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#888",
-            }}
-          >
+        <div className={styles.pageHeader}>
+          <span className={styles.pageHeaderLabel}>
             Add Locale — {island?.name}
           </span>
-          <div style={{ flex: 1, height: "1px", background: "#C8C0B0" }} />
+          <div className={styles.pageHeaderDivider} />
         </div>
 
         {/* Form */}
-        <div style={{ marginBottom: "1.5rem", maxWidth: "400px" }}>
-          <label
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "#888",
-              display: "block",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Locale Name
-          </label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Locale Name</label>
           <input
             name="name"
             value={form.name}
             onChange={handleFormChange}
             placeholder="e.g. Mistérios Negros"
-            style={{
-              width: "100%",
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.72rem",
-              padding: "0.5rem 0.75rem",
-              border: "1px solid #C8C0B0",
-              background: "#F0EBE0",
-              color: "#1A1A18",
-              boxSizing: "border-box",
-            }}
+            className={styles.input}
           />
         </div>
-        <div style={{ marginBottom: "1.5rem", maxWidth: "400px" }}>
-          <label
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "#888",
-              display: "block",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Font Mood
-          </label>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Font Mood</label>
           <select
             value={fontMood}
             onChange={(e) => setFontMood(e.target.value)}
-            style={{
-              width: "100%",
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.72rem",
-              padding: "0.5rem 0.75rem",
-              border: "1px solid #C8C0B0",
-              background: "#F0EBE0",
-              color: "#1A1A18",
-              boxSizing: "border-box",
-            }}
+            className={styles.select}
           >
             {Object.keys(FONT_PAIRS).map((mood) => (
               <option key={mood} value={mood}>
@@ -286,56 +240,29 @@ export default function GeneratorView() {
             ))}
           </select>
         </div>
+
         {/* Upload */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "#888",
-              display: "block",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Reference Images
-          </label>
+        <div className={styles.uploadGroup}>
+          <label className={styles.label}>Reference Images</label>
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             multiple
             onChange={handleImageUpload}
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.72rem",
-              color: "#1A1A18",
-            }}
+            className={styles.fileInput}
           />
           {images.length > 0 && (
-            <div style={{ marginTop: "0.75rem" }}>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.5rem",
-                  flexWrap: "wrap",
-                  marginBottom: "0.5rem",
-                }}
-              >
+            <div>
+              <div className={styles.imagePreviews}>
                 {images.map((file, i) => (
-                  <div key={i} style={{ position: "relative" }}>
+                  <div key={i} className={styles.imageThumb}>
                     <img
                       src={URL.createObjectURL(file)}
                       alt={`upload ${i + 1}`}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
                     />
                     <button
+                      className={styles.removeImageBtn}
                       onClick={() => {
                         setImages((prev) => {
                           const updated = prev.filter((_, idx) => idx !== i);
@@ -345,18 +272,6 @@ export default function GeneratorView() {
                           return updated;
                         });
                       }}
-                      style={{
-                        position: "absolute",
-                        top: "2px",
-                        right: "2px",
-                        background: "#1A1A18",
-                        color: "#F0EBE0",
-                        border: "none",
-                        cursor: "pointer",
-                        fontSize: "0.55rem",
-                        padding: "2px 5px",
-                        lineHeight: 1,
-                      }}
                     >
                       ✕
                     </button>
@@ -364,20 +279,10 @@ export default function GeneratorView() {
                 ))}
               </div>
               <button
+                className={styles.clearBtn}
                 onClick={() => {
                   setImages([]);
                   if (fileInputRef.current) fileInputRef.current.value = "";
-                }}
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  background: "transparent",
-                  border: "none",
-                  color: "#888",
-                  cursor: "pointer",
-                  textDecoration: "underline",
                 }}
               >
                 Clear All
@@ -390,94 +295,32 @@ export default function GeneratorView() {
         <button
           onClick={handleGenerate}
           disabled={loading || generateCount >= MAX_GENERATES}
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.65rem",
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            padding: "0.75rem 2rem",
-            background: loading ? "#888" : "#1A1A18",
-            color: "#F0EBE0",
-            border: "none",
-            cursor: loading ? "not-allowed" : "pointer",
-            marginBottom: "2.5rem",
-          }}
+          className={styles.generateBtn}
         >
           {loading ? "Analyzing images..." : "Generate Locale"}
         </button>
 
-        {error && (
-          <p
-            style={{
-              color: "red",
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.7rem",
-            }}
-          >
-            {error}
-          </p>
-        )}
+        {error && <p className={styles.error}>{error}</p>}
 
         {/* Generated result */}
         {generatedLocale && (
           <>
             <LocaleHero locale={generatedLocale} />
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-                gap: "2rem",
-                marginTop: "2.5rem",
-              }}
-            >
+            <div className={styles.resultGrid}>
               <PalettePanel locale={generatedLocale} />
               <GradientTool locale={generatedLocale} />
               <FontPairingPanel locale={generatedLocale} />
-
             </div>
-            <div style={{ marginTop: "2rem" }}>
+            <div className={styles.stylePreviewWrap}>
               <StylePreview locale={generatedLocale} />
             </div>
-
-            {/* Save button */}
-            <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
-              <button
-                onClick={async () => {
-                  const { getAuth } = await import("firebase/auth");
-                  const currentUser = getAuth().currentUser;
-                  if (!currentUser) {
-                    alert("You need to be signed in to save.");
-                    return;
-                  }
-                  const userLocaleRef = doc(
-                    db,
-                    "users",
-                    currentUser.uid,
-                    "generatedLocales",
-                    generatedLocale.id,
-                  );
-                  await setDoc(userLocaleRef, {
-                    ...generatedLocale,
-                    savedAt: new Date().toISOString(),
-                  });
-                  navigate("/profile");
-                }}
-              >
+            <div className={styles.saveRow}>
+              <button className={styles.saveBtn} onClick={handleSave}>
                 Save to Atlas
               </button>
               <button
+                className={styles.editBtn}
                 onClick={() => setGeneratedLocale(null)}
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  padding: "0.75rem 2rem",
-                  background: "transparent",
-                  color: "#888",
-                  border: "1px solid #C8C0B0",
-                  cursor: "pointer",
-                }}
               >
                 Edit Images
               </button>
