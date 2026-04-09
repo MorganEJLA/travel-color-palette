@@ -12,6 +12,127 @@ import {
 import TopBanner from "../components/layout/TopBanner";
 import NewAlbumModal from "../components/modals/NewAlbumModal";
 import DeleteButton from "../components/buttons/DeleteButton";
+import { useInlineEdit } from "../hooks/useInlineEdit";
+
+const ghostButtonStyle = {
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.55rem",
+  letterSpacing: "0.15em",
+  textTransform: "uppercase",
+  color: "#888",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  padding: 0,
+};
+
+function AlbumCard({ album, user, onClick, onDelete, onRename }) {
+  const { editing, value, setValue, start, save, handleKeyDown } =
+    useInlineEdit(album.name, onRename);
+
+  return (
+    <div
+      onClick={!editing ? onClick : undefined}
+      style={{
+        border: "1px solid #C8C0B0",
+        background: "#F0EBE0",
+        cursor: editing ? "default" : "pointer",
+        transition: "transform 0.1s",
+      }}
+      onMouseEnter={(e) =>
+        !editing && (e.currentTarget.style.transform = "translateY(-2px)")
+      }
+      onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+    >
+      <div style={{ display: "flex", height: "6px" }}>
+        {album.previewColors.map((hex, i) => (
+          <div key={i} style={{ flex: 1, background: hex }} />
+        ))}
+      </div>
+      <div style={{ padding: "1.25rem" }}>
+        <p
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: "0.55rem",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "#888",
+            margin: "0 0 0.4rem 0",
+          }}
+        >
+          {album.country}
+        </p>
+
+        {editing ? (
+          <input
+            autoFocus
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              fontFamily: "'Abril Fatface', cursive",
+              fontSize: "1.8rem",
+              fontWeight: 400,
+              color: "#1A1A18",
+              border: "none",
+              borderBottom: "1px solid #1A1A18",
+              background: "transparent",
+              outline: "none",
+              width: "100%",
+              margin: "0 0 0.75rem 0",
+              lineHeight: 1,
+            }}
+          />
+        ) : (
+          <h2
+            style={{
+              fontFamily: "'Abril Fatface', cursive",
+              fontSize: "1.8rem",
+              fontWeight: 400,
+              color: "#1A1A18",
+              margin: "0 0 0.75rem 0",
+              lineHeight: 1,
+            }}
+          >
+            {album.name}
+          </h2>
+        )}
+
+        <p
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: "0.6rem",
+            color: "#888",
+            letterSpacing: "0.1em",
+            margin: "0 0 0.5rem 0",
+          }}
+        >
+          {album.localeCount} locale{album.localeCount !== 1 ? "s" : ""}
+        </p>
+
+        {user && (
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            {editing ? (
+              <button onClick={save} style={ghostButtonStyle}>
+                Save
+              </button>
+            ) : (
+              <button onClick={start} style={ghostButtonStyle}>
+                Edit
+              </button>
+            )}
+            <DeleteButton
+              label={album.name}
+              variant="text"
+              onDelete={onDelete}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AtlasHome() {
   const navigate = useNavigate();
@@ -118,75 +239,25 @@ export default function AtlasHome() {
         }}
       >
         {albums.map((album) => (
-          <div
+          <AlbumCard
             key={album.id}
+            album={album}
+            user={user}
             onClick={() => navigate(`/${album.id}`)}
-            style={{
-              border: "1px solid #C8C0B0",
-              background: "#F0EBE0",
-              cursor: "pointer",
-              transition: "transform 0.1s",
+            onDelete={async () => {
+              await deleteDoc(doc(db, "albums", album.id));
+              setAlbums((prev) => prev.filter((a) => a.id !== album.id));
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-2px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0)")
-            }
-          >
-            <div style={{ display: "flex", height: "6px" }}>
-              {album.previewColors.map((hex, i) => (
-                <div key={i} style={{ flex: 1, background: hex }} />
-              ))}
-            </div>
-            <div style={{ padding: "1.25rem" }}>
-              <p
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "#888",
-                  margin: "0 0 0.4rem 0",
-                }}
-              >
-                {album.country}
-              </p>
-              <h2
-                style={{
-                  fontFamily: "'Abril Fatface', cursive",
-                  fontSize: "1.8rem",
-                  fontWeight: 400,
-                  color: "#1A1A18",
-                  margin: "0 0 0.75rem 0",
-                  lineHeight: 1,
-                }}
-              >
-                {album.name}
-              </h2>
-              <p
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.6rem",
-                  color: "#888",
-                  letterSpacing: "0.1em",
-                  margin: "0 0 0.5rem 0",
-                }}
-              >
-                {album.localeCount} locale{album.localeCount !== 1 ? "s" : ""}
-              </p>
-              {user && (
-                <DeleteButton
-                  label={album.name}
-                  variant="text"
-                  onDelete={async () => {
-                    await deleteDoc(doc(db, "albums", album.id));
-                    setAlbums((prev) => prev.filter((a) => a.id !== album.id));
-                  }}
-                />
-              )}
-            </div>
-          </div>
+            onRename={async (newName) => {
+              const ref = doc(db, "albums", album.id);
+              await setDoc(ref, { name: newName }, { merge: true });
+              setAlbums((prev) =>
+                prev.map((a) =>
+                  a.id === album.id ? { ...a, name: newName } : a,
+                ),
+              );
+            }}
+          />
         ))}
 
         {user && (

@@ -7,7 +7,84 @@ import DeleteButton from "../components/buttons/DeleteButton";
 import TopBanner from "../components/layout/TopBanner";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthGate } from "../hooks/useAuthGate";
+import { useInlineEdit } from "../hooks/useInlineEdit";
 import NotFound from "./NotFound";
+
+const ghostButtonStyle = {
+  fontFamily: "'DM Mono', monospace",
+  fontSize: "0.55rem",
+  letterSpacing: "0.15em",
+  textTransform: "uppercase",
+  color: "#888",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  padding: 0,
+};
+
+function IslandNameEdit({ island, albumId, onRename }) {
+  const { editing, value, setValue, start, save, handleKeyDown } =
+    useInlineEdit(island.name, async (newName) => {
+      const albumRef = doc(db, "albums", albumId);
+      const snap = await getDoc(albumRef);
+      const albumData = snap.data();
+      const updatedIslands = albumData.islands.map((i) =>
+        i.id === island.id ? { ...i, name: newName } : i,
+      );
+      await setDoc(albumRef, { ...albumData, islands: updatedIslands });
+      onRename(newName);
+    });
+
+  if (editing) {
+    return (
+      <div
+        style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <input
+          autoFocus
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            fontSize: "0.6rem",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "#888",
+            border: "none",
+            borderBottom: "1px solid #888",
+            background: "transparent",
+            outline: "none",
+          }}
+        />
+        <button onClick={save} style={ghostButtonStyle}>
+          Save
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+      <span
+        style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: "0.6rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "#888",
+        }}
+      >
+        {island.name}
+      </span>
+      <button onClick={start} style={ghostButtonStyle}>
+        Edit
+      </button>
+    </div>
+  );
+}
+
 export default function AlbumView() {
   const { albumId } = useParams();
   const navigate = useNavigate();
@@ -96,6 +173,7 @@ export default function AlbumView() {
       <div style={{ padding: "2.5rem" }}>
         {place.islands.map((island) => (
           <div key={island.id} style={{ marginBottom: "3rem" }}>
+            {/* Island header row */}
             <div
               style={{
                 display: "flex",
@@ -104,18 +182,35 @@ export default function AlbumView() {
                 marginBottom: "1.5rem",
               }}
             >
-              <span
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "#888",
-                }}
-              >
-                {island.name}
-              </span>
+              {user ? (
+                <IslandNameEdit
+                  island={island}
+                  albumId={albumId}
+                  onRename={(newName) => {
+                    setPlace((prev) => ({
+                      ...prev,
+                      islands: prev.islands.map((i) =>
+                        i.id === island.id ? { ...i, name: newName } : i,
+                      ),
+                    }));
+                  }}
+                />
+              ) : (
+                <span
+                  style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "0.6rem",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#888",
+                  }}
+                >
+                  {island.name}
+                </span>
+              )}
+
               <div style={{ flex: 1, height: "1px", background: "#C8C0B0" }} />
+
               {user && (
                 <DeleteButton
                   label={island.name}
@@ -136,6 +231,7 @@ export default function AlbumView() {
               )}
             </div>
 
+            {/* Locale cards */}
             <div
               style={{
                 display: "grid",
