@@ -7,6 +7,7 @@ import TopBanner from "../components/layout/TopBanner";
 import LocaleHero from "../components/layout/LocaleHero";
 import PalettePanel from "../components/panels/PalettePanel";
 import GradientTool from "../components/panels/GradientTool";
+import StylePreview from "../components/StylePreview";
 import FontPairingPanel from "../components/panels/FontPairingPanel";
 import { FONT_PAIRS } from "../data/fontPairs";
 
@@ -431,6 +432,7 @@ export default function GeneratorView() {
               <PalettePanel locale={generatedLocale} />
               <GradientTool locale={generatedLocale} />
               <FontPairingPanel locale={generatedLocale} />
+              <StylePreview locale={generatedLocale} />
             </div>
 
             {/* Save button */}
