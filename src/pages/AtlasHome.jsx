@@ -257,6 +257,15 @@ export default function AtlasHome() {
                 ),
               );
             }}
+            onCountryRename={async (newCountry) => {
+              const ref = doc(db, "albums", album.id);
+              await setDoc(ref, { country: newCountry }, { merge: true });
+              setAlbums((prev) =>
+                prev.map((a) =>
+                  a.id === album.id ? { ...a, country: newCountry } : a,
+                ),
+              );
+            }}
           />
         ))}
 
