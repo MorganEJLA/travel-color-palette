@@ -12,3 +12,27 @@ body {
 #root {
   width: 100%;
 }
+
+/* Custom properties */
+:root {
+  --color-bg: #f0ebe0;
+  --color-ink: #1a1a18;
+  --color-border: #c8c0b0;
+  --color-muted: #888;
+  --font-mono: "DM Mono", monospace;
+  --font-display: "Abril Fatface", cursive;
+  --font-sans: "Montserrat", sans-serif;
+}
+
+/* Global utility classes */
+.ghostButton {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}

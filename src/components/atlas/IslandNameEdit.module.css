@@ -1,0 +1,31 @@
+.editRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.displayRow {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.input {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border: none;
+  border-bottom: 1px solid var(--color-muted);
+  background: transparent;
+  outline: none;
+}
+
+.islandName {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}

@@ -1,0 +1,41 @@
+.card {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.colorStrip {
+  display: flex;
+  height: 6px;
+}
+
+.colorSegment {
+  flex: 1;
+}
+
+.body {
+  padding: 1.25rem;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0 0 0.75rem 0;
+  line-height: 1;
+}
+
+.mood {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  margin: 0 0 0.75rem 0;
+}
