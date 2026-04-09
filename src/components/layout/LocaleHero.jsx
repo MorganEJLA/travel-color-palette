@@ -29,7 +29,7 @@ function getReadableTextColor(bgHex, palette) {
   const candidates = [palette[3].hex, palette[2].hex, palette[1].hex];
 
   for (const hex of candidates) {
-    if (getContrastRatio(bgHex, hex) >= 3.5) return hex;
+    if (getContrastRatio(bgHex, hex) >= 5.5) return hex;
   }
 
   // last resort — return whichever candidate has the best contrast
