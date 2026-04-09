@@ -26,13 +26,16 @@ function getContrastRatio(hex1, hex2) {
 }
 
 function getReadableTextColor(bgHex, palette) {
+  const bgLuminance = getLuminance(hexToRgb(bgHex));
+  const isDark = bgLuminance < 0.2;
+  const threshold = isDark ? 5.5 : 4.5;
+
   const candidates = [palette[3].hex, palette[2].hex, palette[1].hex];
 
   for (const hex of candidates) {
-    if (getContrastRatio(bgHex, hex) >= 4.5) return hex;
+    if (getContrastRatio(bgHex, hex) >= threshold) return hex;
   }
 
-  // last resort — return whichever candidate has the best contrast
   return candidates.reduce((best, hex) =>
     getContrastRatio(bgHex, hex) > getContrastRatio(bgHex, best) ? hex : best,
   );
