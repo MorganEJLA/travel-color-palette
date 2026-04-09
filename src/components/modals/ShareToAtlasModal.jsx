@@ -11,13 +11,26 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
   const [error, setError] = useState(null);
   const [alreadyShared, setAlreadyShared] = useState(false);
 
+  function paletteMatchScore(paletteA, paletteB) {
+    if (!paletteA || !paletteB) return 0;
+    const matches = paletteA.filter(
+      (swatchA, i) =>
+        paletteB[i]?.hex?.toLowerCase() === swatchA.hex?.toLowerCase(),
+    ).length;
+    return matches / paletteA.length;
+  }
   const checkAlreadyShared = useCallback(
     (islandId, islandList) => {
       const island = islandList.find((i) => i.id === islandId);
-      const exists = island?.locales?.some((l) => l.id === locale.id) ?? false;
-      setAlreadyShared(exists);
+      const isDuplicate =
+        island?.locales?.some((l) => {
+          const sameName = l.name?.toLowerCase() === locale.name?.toLowerCase();
+          const paletteScore = paletteMatchScore(l.palette, locale.palette);
+          return sameName && paletteScore >= 0.6;
+        }) ?? false;
+      setAlreadyShared(isDuplicate);
     },
-    [locale.id],
+    [locale.name, locale.palette],
   );
   useEffect(() => {
     async function fetchAlbums() {

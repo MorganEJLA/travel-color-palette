@@ -70,6 +70,7 @@ export default function GeneratorView() {
   }
 
   async function handleGenerate() {
+    
     if (generateCount >= MAX_GENERATES) {
       setError("Maximum generations reached for this session.");
       return;
@@ -432,7 +433,7 @@ export default function GeneratorView() {
               <PalettePanel locale={generatedLocale} />
               <GradientTool locale={generatedLocale} />
               <FontPairingPanel locale={generatedLocale} />
-             
+
             </div>
             <div style={{ marginTop: "2rem" }}>
               <StylePreview locale={generatedLocale} />
