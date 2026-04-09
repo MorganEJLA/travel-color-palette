@@ -1,4 +1,4 @@
-import { useInlineEdit } from "../hooks/useInlineEdit";
+import { useInlineEdit } from "../../hooks/useInlineEdit";
 export default function AlbumCard({
   album,
   user,

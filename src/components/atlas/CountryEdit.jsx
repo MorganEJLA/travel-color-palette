@@ -1,5 +1,4 @@
-
-import { useInlineEdit } from "../hooks/useInlineEdit";
+import { useInlineEdit } from "../../hooks/useInlineEdit";
 
 export default function CountryEdit({ album, onRename }) {
   const { editing, value, setValue, start, handleKeyDown } = useInlineEdit(
