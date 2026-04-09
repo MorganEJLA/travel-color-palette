@@ -1,8 +1,48 @@
+function hexToRgb(hex) {
+  const clean = hex.replace("#", "");
+  return {
+    r: parseInt(clean.substring(0, 2), 16),
+    g: parseInt(clean.substring(2, 4), 16),
+    b: parseInt(clean.substring(4, 6), 16),
+  };
+}
+
+function getLuminance({ r, g, b }) {
+  const [rs, gs, bs] = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function getContrastRatio(hex1, hex2) {
+  const l1 = getLuminance(hexToRgb(hex1));
+  const l2 = getLuminance(hexToRgb(hex2));
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function getReadableTextColor(bgHex, palette) {
+  const bgLuminance = getLuminance(hexToRgb(bgHex));
+  const isDark = bgLuminance < 0.2;
+  const threshold = isDark ? 5.5 : 4.5;
+
+  const candidates = [palette[3].hex, palette[2].hex, palette[1].hex];
+
+  for (const hex of candidates) {
+    if (getContrastRatio(bgHex, hex) >= threshold) return hex;
+  }
+
+  return candidates.reduce((best, hex) =>
+    getContrastRatio(bgHex, hex) > getContrastRatio(bgHex, best) ? hex : best,
+  );
+}
+
 export default function StylePreview({ locale }) {
   const primary = locale.palette[0].hex;
   const secondary = locale.palette[1].hex;
-
-  const light = locale.palette[3].hex;
+  const textColor = getReadableTextColor(primary, locale.palette);
 
   return (
     <section>
@@ -37,7 +77,6 @@ export default function StylePreview({ locale }) {
           border: "3px solid #1A1A18",
         }}
       >
-        {/* Decorative geometric shapes */}
         <div
           style={{
             position: "absolute",
@@ -59,7 +98,7 @@ export default function StylePreview({ locale }) {
             width: "100px",
             height: "100px",
             borderRadius: "50%",
-            border: `2px solid ${light}`,
+            border: `2px solid ${textColor}`,
             opacity: 0.2,
           }}
         />
@@ -71,7 +110,7 @@ export default function StylePreview({ locale }) {
               fontSize: "0.55rem",
               letterSpacing: "0.25em",
               textTransform: "uppercase",
-              color: light,
+              color: textColor,
               margin: "0 0 0.75rem 0",
               opacity: 0.7,
             }}
@@ -84,7 +123,7 @@ export default function StylePreview({ locale }) {
               fontFamily: `'${locale.fonts.display}', serif`,
               fontWeight: locale.fonts.displayWeight,
               fontSize: "2.2rem",
-              color: light,
+              color: textColor,
               margin: "0 0 0.5rem 0",
               lineHeight: 1,
             }}
@@ -96,7 +135,7 @@ export default function StylePreview({ locale }) {
             style={{
               height: "2px",
               width: "40px",
-              background: light,
+              background: textColor,
               opacity: 0.5,
               margin: "0.75rem 0",
             }}
@@ -106,7 +145,7 @@ export default function StylePreview({ locale }) {
             style={{
               fontFamily: `'${locale.fonts.body}', sans-serif`,
               fontSize: "0.78rem",
-              color: light,
+              color: textColor,
               opacity: 0.8,
               margin: "0 0 1.5rem 0",
               maxWidth: "220px",
@@ -117,7 +156,6 @@ export default function StylePreview({ locale }) {
             {locale.mood.split(".")[0]}.
           </p>
 
-          {/* Swatch row */}
           <div
             style={{
               display: "flex",
