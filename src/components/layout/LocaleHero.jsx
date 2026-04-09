@@ -1,12 +1,53 @@
 import { useNavigate, useParams } from "react-router-dom";
+
+function hexToRgb(hex) {
+  const clean = hex.replace("#", "");
+  return {
+    r: parseInt(clean.substring(0, 2), 16),
+    g: parseInt(clean.substring(2, 4), 16),
+    b: parseInt(clean.substring(4, 6), 16),
+  };
+}
+
+function getLuminance({ r, g, b }) {
+  const [rs, gs, bs] = [r, g, b].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+function getContrastRatio(hex1, hex2) {
+  const l1 = getLuminance(hexToRgb(hex1));
+  const l2 = getLuminance(hexToRgb(hex2));
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function getReadableTextColor(bgHex, palette) {
+  const candidates = [palette[3].hex, palette[2].hex, palette[1].hex];
+
+  for (const hex of candidates) {
+    if (getContrastRatio(bgHex, hex) >= 3.5) return hex;
+  }
+
+  // last resort — return whichever candidate has the best contrast
+  return candidates.reduce((best, hex) =>
+    getContrastRatio(bgHex, hex) > getContrastRatio(bgHex, best) ? hex : best,
+  );
+}
+
 export default function LocaleHero({ locale }) {
   const primary = locale.palette[0].hex;
   const secondary = locale.palette[1].hex;
   const accent = locale.palette[2].hex;
-  const light = locale.palette[3].hex;
+
+  const textColor = getReadableTextColor(primary, locale.palette);
 
   const navigate = useNavigate();
   const { albumId } = useParams();
+
   return (
     <div
       style={{
@@ -17,7 +58,6 @@ export default function LocaleHero({ locale }) {
         overflow: "hidden",
       }}
     >
-      {/* Big decorative circle */}
       <div
         style={{
           position: "absolute",
@@ -50,7 +90,7 @@ export default function LocaleHero({ locale }) {
             fontSize: "0.6rem",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: light,
+            color: textColor,
             margin: "0 0 0.5rem 0",
             opacity: 0.85,
           }}
@@ -78,7 +118,7 @@ export default function LocaleHero({ locale }) {
             fontFamily: "'Abril Fatface', cursive",
             fontWeight: 400,
             fontSize: "clamp(3.5rem, 8vw, 6rem)",
-            color: light,
+            color: textColor,
             margin: "0 0 1rem 0",
             lineHeight: 0.9,
             letterSpacing: "-0.02em",
@@ -98,7 +138,7 @@ export default function LocaleHero({ locale }) {
             style={{
               height: "1px",
               width: "30px",
-              background: light,
+              background: textColor,
               opacity: 0.5,
             }}
           />
@@ -107,7 +147,7 @@ export default function LocaleHero({ locale }) {
           style={{
             fontFamily: "'Montserrat', sans-serif",
             fontSize: "0.95rem",
-            color: light,
+            color: textColor,
             lineHeight: 1.7,
             maxWidth: "480px",
             opacity: 0.85,
