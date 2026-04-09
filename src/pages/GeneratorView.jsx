@@ -133,8 +133,8 @@ export default function GeneratorView() {
     - Swatch names should be poetic and location-specific
     - Hex values must be accurate to what you see in the images
     - Mood should be evocative and under 30 words
-    - Palette order matters: swatch 1 is the background color, swatch 2 is primary text/UI, swatch 3 is secondary/accent, swatch 4 is a light neutral that must have a contrast ratio of at least 5.5:1 against swatch 1, swatch 5 is a supporting tone
-    - Swatch 4 must always be a light, legible color — cream, off-white, pale stone, or similar — that reads clearly on top of swatch 1
+    - Palette order matters: swatch 1 is the background color, swatch 2 is primary text/UI, swatch 3 is secondary/accent, swatch 4 is the hero text color, swatch 5 is a supporting tone
+    - Swatch 4 must meet WCAG AA contrast compliance — a minimum contrast ratio of 4.5:1 against swatch 1. Prefer light neutrals like cream, off-white, pale stone, or mist that feel appropriate to the location
     - Return ONLY the JSON, nothing else.`;
 
       const response = await fetch("/api/anthropic", {
