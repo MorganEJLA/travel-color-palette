@@ -471,7 +471,7 @@ export default function GeneratorView() {
                   cursor: "pointer",
                 }}
               >
-                Regenerate
+                Edit Images
               </button>
             </div>
           </>
