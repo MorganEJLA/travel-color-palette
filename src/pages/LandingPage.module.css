@@ -1,44 +1,41 @@
-/* Layout */
-.landing-page {
-  background: #F0EBE0;
+.page {
+  background: #f0ebe0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'DM Mono', monospace;
+  font-family: "DM Mono", monospace;
 }
 
-/* Color strip */
-.color-strip {
+.colorStrip {
   display: flex;
   height: 4px;
 }
 
-.color-strip-segment {
+.colorSegment {
   flex: 1;
 }
 
-/* Nav */
-.landing-nav {
+.nav {
   padding: 1.2rem 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.landing-logo {
+.logo {
   font-size: 0.62rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: #1A1A18;
+  color: #1a1a18;
 }
 
-.landing-nav-links {
+.navLinks {
   display: flex;
   gap: 2rem;
 }
 
-.nav-button {
-  font-family: 'DM Mono', monospace;
+.navButton {
+  font-family: "DM Mono", monospace;
   font-size: 0.58rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -48,8 +45,7 @@
   cursor: pointer;
 }
 
-/* Body */
-.landing-body {
+.body {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -58,13 +54,12 @@
   gap: 1.5rem;
 }
 
-/* Left — copy */
-.landing-copy {
+.copy {
   display: flex;
   flex-direction: column;
 }
 
-.landing-eyebrow {
+.eyebrow {
   font-size: 0.58rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -72,16 +67,16 @@
   margin-bottom: 1.2rem;
 }
 
-.landing-headline {
-  font-family: 'Abril Fatface', cursive;
+.headline {
+  font-family: "Abril Fatface", cursive;
   font-size: clamp(3rem, 6vw, 4.5rem);
   font-weight: 400;
   line-height: 0.92;
-  color: #1A1A18;
+  color: #1a1a18;
   margin: 0 0 1.8rem 0;
 }
 
-.landing-description {
+.description {
   font-size: 0.6rem;
   letter-spacing: 0.06em;
   line-height: 1.9;
@@ -90,24 +85,24 @@
   margin-bottom: 1.5rem;
 }
 
-.landing-quote {
+.quote {
   font-size: 0.58rem;
   letter-spacing: 0.06em;
   line-height: 1.9;
   color: #aaa;
   max-width: 380px;
   margin-bottom: 2.2rem;
-  border-left: 2px solid #C8C0B0;
+  border-left: 2px solid #c8c0b0;
   padding-left: 0.85rem;
 }
 
-.landing-cta {
+.cta {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  background: #1A1A18;
-  color: #F0EBE0;
-  font-family: 'DM Mono', monospace;
+  background: #1a1a18;
+  color: #f0ebe0;
+  font-family: "DM Mono", monospace;
   font-size: 0.58rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -118,30 +113,25 @@
   margin-bottom: 1rem;
 }
 
-/* Right — illustration */
-.landing-illustration {
+.illustration {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 500px;
 }
 
-.landing-illustration img {
+.illustration img {
   width: 100%;
   max-width: 480px;
   height: auto;
   display: block;
 }
 
-/* Footer */
-.landing-footer {
+.footer {
   padding: 1rem 2.5rem;
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid #C8C0B0;
-}
-
-.landing-footer span {
+  border-top: 1px solid #c8c0b0;
   font-size: 0.52rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;

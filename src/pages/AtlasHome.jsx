@@ -11,195 +11,8 @@ import {
 } from "firebase/firestore";
 import TopBanner from "../components/layout/TopBanner";
 import NewAlbumModal from "../components/modals/NewAlbumModal";
-import DeleteButton from "../components/buttons/DeleteButton";
-import { useInlineEdit } from "../hooks/useInlineEdit";
-
-const ghostButtonStyle = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: "0.55rem",
-  letterSpacing: "0.15em",
-  textTransform: "uppercase",
-  color: "#888",
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-  padding: 0,
-};
-
-function CountryEdit({ album, onRename }) {
-  const { editing, value, setValue, start, handleKeyDown } = useInlineEdit(
-    album.country,
-    onRename,
-  );
-
-  if (editing) {
-    return (
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ margin: "0 0 0.4rem 0" }}
-      >
-        <input
-          autoFocus
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.55rem",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "#888",
-            border: "none",
-            borderBottom: "1px solid #888",
-            background: "transparent",
-            outline: "none",
-            width: "100%",
-          }}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <p
-      onClick={(e) => {
-        e.stopPropagation();
-        start(e);
-      }}
-      title="Click to edit"
-      style={{
-        fontFamily: "'DM Mono', monospace",
-        fontSize: "0.55rem",
-        letterSpacing: "0.2em",
-        textTransform: "uppercase",
-        color: "#888",
-        margin: "0 0 0.4rem 0",
-        cursor: "text",
-      }}
-    >
-      {album.country}
-    </p>
-  );
-}
-
-function AlbumCard({
-  album,
-  user,
-  onClick,
-  onDelete,
-  onRename,
-  onCountryRename,
-}) {
-  const { editing, value, setValue, start, save, handleKeyDown } =
-    useInlineEdit(album.name, onRename);
-
-  return (
-    <div
-      onClick={!editing ? onClick : undefined}
-      style={{
-        border: "1px solid #C8C0B0",
-        background: "#F0EBE0",
-        cursor: editing ? "default" : "pointer",
-        transition: "transform 0.1s",
-      }}
-      onMouseEnter={(e) =>
-        !editing && (e.currentTarget.style.transform = "translateY(-2px)")
-      }
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-    >
-      <div style={{ display: "flex", height: "6px" }}>
-        {album.previewColors.map((hex, i) => (
-          <div key={i} style={{ flex: 1, background: hex }} />
-        ))}
-      </div>
-      <div style={{ padding: "1.25rem" }}>
-        {user ? (
-          <CountryEdit album={album} onRename={onCountryRename} />
-        ) : (
-          <p
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.55rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#888",
-              margin: "0 0 0.4rem 0",
-            }}
-          >
-            {album.country}
-          </p>
-        )}
-
-        {editing ? (
-          <input
-            autoFocus
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              fontFamily: "'Abril Fatface', cursive",
-              fontSize: "1.8rem",
-              fontWeight: 400,
-              color: "#1A1A18",
-              border: "none",
-              borderBottom: "1px solid #1A1A18",
-              background: "transparent",
-              outline: "none",
-              width: "100%",
-              margin: "0 0 0.75rem 0",
-              lineHeight: 1,
-            }}
-          />
-        ) : (
-          <h2
-            style={{
-              fontFamily: "'Abril Fatface', cursive",
-              fontSize: "1.8rem",
-              fontWeight: 400,
-              color: "#1A1A18",
-              margin: "0 0 0.75rem 0",
-              lineHeight: 1,
-            }}
-          >
-            {album.name}
-          </h2>
-        )}
-
-        <p
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            color: "#888",
-            letterSpacing: "0.1em",
-            margin: "0 0 0.5rem 0",
-          }}
-        >
-          {album.localeCount} locale{album.localeCount !== 1 ? "s" : ""}
-        </p>
-
-        {user && (
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            {editing ? (
-              <button onClick={save} style={ghostButtonStyle}>
-                Save
-              </button>
-            ) : (
-              <button onClick={start} style={ghostButtonStyle}>
-                Edit
-              </button>
-            )}
-            <DeleteButton
-              label={album.name}
-              variant="text"
-              onDelete={onDelete}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+import AlbumCard from "../components/atlas/AlbumCard";
+import styles from "./AtlasHome.module.css";
 
 export default function AtlasHome() {
   const navigate = useNavigate();
@@ -210,185 +23,108 @@ export default function AtlasHome() {
 
   useEffect(() => {
     async function fetchAlbums() {
-      const snapshot = await getDocs(collection(db, "albums"));
-      const fetched = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        const allLocales = data.islands?.flatMap((i) => i.locales) || [];
-        return {
-          id: doc.id,
-          name: data.name,
-          country: data.country,
-          localeCount: allLocales.length,
-          previewColors:
-            data.islands?.[0]?.locales?.[0]?.palette
-              ?.slice(0, 3)
-              .map((s) => s.hex) || [],
-        };
-      });
-      setAlbums(fetched);
-      setLoading(false);
+      try {
+        const snapshot = await getDocs(collection(db, "albums"));
+        const fetched = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const allLocales = data.islands?.flatMap((i) => i.locales) || [];
+          return {
+            id: doc.id,
+            name: data.name,
+            country: data.country,
+            localeCount: allLocales.length,
+            previewColors:
+              data.islands?.[0]?.locales?.[0]?.palette
+                ?.slice(0, 3)
+                .map((s) => s.hex) || [],
+          };
+        });
+        setAlbums(fetched);
+      } catch (err) {
+        console.error("Failed to fetch albums:", err);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchAlbums();
   }, []);
 
-  if (loading)
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "#F0EBE0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "'DM Mono', monospace",
-          fontSize: "0.6rem",
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: "#888",
-        }}
-      >
-        Loading...
-      </div>
+  async function handleDelete(albumId) {
+    await deleteDoc(doc(db, "albums", albumId));
+    setAlbums((prev) => prev.filter((a) => a.id !== albumId));
+  }
+
+  async function handleRename(albumId, newName) {
+    const ref = doc(db, "albums", albumId);
+    await setDoc(ref, { name: newName }, { merge: true });
+    setAlbums((prev) =>
+      prev.map((a) => (a.id === albumId ? { ...a, name: newName } : a)),
     );
+  }
+
+  async function handleCountryRename(albumId, newCountry) {
+    const ref = doc(db, "albums", albumId);
+    await setDoc(ref, { country: newCountry }, { merge: true });
+    setAlbums((prev) =>
+      prev.map((a) => (a.id === albumId ? { ...a, country: newCountry } : a)),
+    );
+  }
+
+  if (loading) return <div className={styles.loading}>Loading...</div>;
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F0EBE0",
-        fontFamily: "'Montserrat', sans-serif",
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
-      }}
-    >
+    <div className={styles.page}>
       <TopBanner onSignOut={() => {}} />
 
-      <div style={{ padding: "3rem 2.5rem 2rem" }}>
-        <p
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: "0.6rem",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "#888",
-            marginBottom: "0.5rem",
-          }}
-        >
-          Chromaterra
-        </p>
-        <h1
-          style={{
-            fontFamily: "'Abril Fatface', cursive",
-            fontSize: "clamp(3rem, 8vw, 6rem)",
-            fontWeight: 400,
-            lineHeight: 0.9,
-            color: "#1A1A18",
-            margin: "0 0 0.5rem 0",
-          }}
-        >
-          My Atlas
-        </h1>
-        <div
-          style={{
-            height: "1px",
-            width: "100%",
-            background: "#C8C0B0",
-            margin: "1.5rem 0",
-          }}
-        />
+      <div className={styles.header}>
+        <p className={styles.eyebrow}>Chromaterra</p>
+        <h1 className={styles.headline}>Atlas</h1>
+        <div className={styles.divider} />
       </div>
 
-      <div
-        style={{
-          padding: "0 2.5rem 2.5rem",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "1.5rem",
-        }}
-      >
+      <div className={styles.grid}>
         {albums.map((album) => (
           <AlbumCard
             key={album.id}
             album={album}
             user={user}
             onClick={() => navigate(`/${album.id}`)}
-            onDelete={async () => {
-              await deleteDoc(doc(db, "albums", album.id));
-              setAlbums((prev) => prev.filter((a) => a.id !== album.id));
-            }}
-            onRename={async (newName) => {
-              const ref = doc(db, "albums", album.id);
-              await setDoc(ref, { name: newName }, { merge: true });
-              setAlbums((prev) =>
-                prev.map((a) =>
-                  a.id === album.id ? { ...a, name: newName } : a,
-                ),
-              );
-            }}
-            onCountryRename={async (newCountry) => {
-              const ref = doc(db, "albums", album.id);
-              await setDoc(ref, { country: newCountry }, { merge: true });
-              setAlbums((prev) =>
-                prev.map((a) =>
-                  a.id === album.id ? { ...a, country: newCountry } : a,
-                ),
-              );
-            }}
+            onDelete={() => handleDelete(album.id)}
+            onRename={(newName) => handleRename(album.id, newName)}
+            onCountryRename={(newCountry) =>
+              handleCountryRename(album.id, newCountry)
+            }
           />
         ))}
 
         {user && (
           <div
+            className={styles.newAlbumCard}
             onClick={() => setShowModal(true)}
-            style={{
-              border: "1px dashed #C8C0B0",
-              background: "transparent",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: "120px",
-              padding: "1.25rem",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "#1A1A18")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "#C8C0B0")
-            }
           >
-            <span
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: "0.6rem",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "#888",
-              }}
-            >
-              + New Album
-            </span>
+            <span className={styles.newAlbumLabel}>+ New Album</span>
           </div>
         )}
-
-        {showModal && (
-          <NewAlbumModal
-            onClose={() => setShowModal(false)}
-            onSave={async (newAlbum) => {
-              await setDoc(doc(db, "albums", newAlbum.id), newAlbum);
-              setAlbums((prev) => [
-                ...prev,
-                {
-                  id: newAlbum.id,
-                  name: newAlbum.name,
-                  country: newAlbum.country,
-                  localeCount: 0,
-                  previewColors: [],
-                },
-              ]);
-            }}
-          />
-        )}
       </div>
+
+      {showModal && (
+        <NewAlbumModal
+          onClose={() => setShowModal(false)}
+          onSave={async (newAlbum) => {
+            await setDoc(doc(db, "albums", newAlbum.id), newAlbum);
+            setAlbums((prev) => [
+              ...prev,
+              {
+                id: newAlbum.id,
+                name: newAlbum.name,
+                country: newAlbum.country,
+                localeCount: 0,
+                previewColors: [],
+              },
+            ]);
+          }}
+        />
+      )}
     </div>
   );
 }
