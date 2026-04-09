@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
@@ -9,7 +9,16 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
   const [islands, setIslands] = useState([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [alreadyShared, setAlreadyShared] = useState(false);
 
+  const checkAlreadyShared = useCallback(
+    (islandId, islandList) => {
+      const island = islandList.find((i) => i.id === islandId);
+      const exists = island?.locales?.some((l) => l.id === locale.id) ?? false;
+      setAlreadyShared(exists);
+    },
+    [locale.id],
+  );
   useEffect(() => {
     async function fetchAlbums() {
       const snap = await getDocs(collection(db, "albums"));
@@ -24,18 +33,28 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
         setIslands(fetched[0].islands);
         if (fetched[0].islands.length > 0) {
           setSelectedIslandId(fetched[0].islands[0].id);
+          checkAlreadyShared(fetched[0].islands[0], fetched[0].islands);
         }
       }
     }
     fetchAlbums();
-  }, []);
+  }, [checkAlreadyShared]);
 
   function handleAlbumChange(e) {
     const albumId = e.target.value;
     setSelectedAlbumId(albumId);
     const album = albums.find((a) => a.id === albumId);
-    setIslands(album?.islands || []);
-    setSelectedIslandId(album?.islands?.[0]?.id || "");
+    const newIslands = album?.islands || [];
+    setIslands(newIslands);
+    const firstIslandId = newIslands[0]?.id || "";
+    setSelectedIslandId(firstIslandId);
+    checkAlreadyShared(firstIslandId, newIslands);
+  }
+
+  function handleIslandChange(e) {
+    const islandId = e.target.value;
+    setSelectedIslandId(islandId);
+    checkAlreadyShared(islandId, islands);
   }
 
   async function handleShare() {
@@ -43,6 +62,8 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
       setError("Please select an album and island.");
       return;
     }
+    if (alreadyShared) return;
+
     setSaving(true);
     setError(null);
 
@@ -53,8 +74,6 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
 
       const updatedIslands = albumData.islands.map((island) => {
         if (island.id === selectedIslandId) {
-          const alreadyExists = island.locales.some((l) => l.id === locale.id);
-          if (alreadyExists) return island;
           return {
             ...island,
             locales: [
@@ -199,7 +218,7 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
           <label style={labelStyle}>Island / Area</label>
           <select
             value={selectedIslandId}
-            onChange={(e) => setSelectedIslandId(e.target.value)}
+            onChange={handleIslandChange}
             style={inputStyle}
           >
             {islands.map((island) => (
@@ -209,6 +228,23 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
             ))}
           </select>
         </div>
+
+        {/* Already shared warning */}
+        {alreadyShared && (
+          <p
+            style={{
+              fontFamily: "'DM Mono', monospace",
+              fontSize: "0.6rem",
+              letterSpacing: "0.1em",
+              color: "#3d5941",
+              margin: 0,
+              borderLeft: "2px solid #3d5941",
+              paddingLeft: "0.75rem",
+            }}
+          >
+            Already in this area. Delete it from the atlas first to re-add.
+          </p>
+        )}
 
         {error && (
           <p
@@ -227,7 +263,7 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
         <div style={{ display: "flex", gap: "1rem" }}>
           <button
             onClick={handleShare}
-            disabled={saving}
+            disabled={saving || alreadyShared}
             style={{
               flex: 1,
               fontFamily: "'DM Mono', monospace",
@@ -235,13 +271,21 @@ export default function ShareToAtlasModal({ locale, onClose, onSuccess }) {
               letterSpacing: "0.2em",
               textTransform: "uppercase",
               padding: "0.8rem 1.6rem",
-              background: saving ? "#888" : "#1A1A18",
-              color: "#F0EBE0",
+              background: alreadyShared
+                ? "#C8C0B0"
+                : saving
+                  ? "#888"
+                  : "#1A1A18",
+              color: alreadyShared ? "#888" : "#F0EBE0",
               border: "none",
-              cursor: saving ? "not-allowed" : "pointer",
+              cursor: alreadyShared || saving ? "not-allowed" : "pointer",
             }}
           >
-            {saving ? "Sharing..." : "Share to Atlas →"}
+            {alreadyShared
+              ? "Already Added"
+              : saving
+                ? "Sharing..."
+                : "Share to Atlas →"}
           </button>
           <button
             onClick={onClose}
