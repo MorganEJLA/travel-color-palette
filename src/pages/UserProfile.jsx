@@ -333,7 +333,6 @@ export default function UserProfile() {
               <DeleteButton
                 label={locale.name}
                 variant="text"
-                style={{ padding: "0.75rem 1.25rem" }}
                 onDelete={async () => {
                   await deleteDoc(
                     doc(db, "users", user.uid, "generatedLocales", locale.id),

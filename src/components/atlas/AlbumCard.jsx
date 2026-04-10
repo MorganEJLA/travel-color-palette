@@ -1,4 +1,6 @@
 import { useInlineEdit } from "../../hooks/useInlineEdit";
+import CountryEdit from "./CountryEdit";
+import DeleteButton from "../buttons/DeleteButton";
 export default function AlbumCard({
   album,
   user,
@@ -9,17 +11,7 @@ export default function AlbumCard({
 }) {
   const { editing, value, setValue, start, save, handleKeyDown } =
     useInlineEdit(album.name, onRename);
-  const ghostButtonStyle = {
-    fontFamily: "'DM Mono', monospace",
-    fontSize: "0.55rem",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase",
-    color: "#888",
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-    padding: 0,
-  };
+
   return (
     <div
       onClick={!editing ? onClick : undefined}
@@ -108,11 +100,11 @@ export default function AlbumCard({
         {user && (
           <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
             {editing ? (
-              <button onClick={save} style={ghostButtonStyle}>
+              <button onClick={save} className="ghostButton">
                 Save
               </button>
             ) : (
-              <button onClick={start} style={ghostButtonStyle}>
+              <button onClick={start} className="ghostButton">
                 Edit
               </button>
             )}

@@ -9,6 +9,9 @@ import PalettePanel from "../components/panels/PalettePanel";
 import GradientTool from "../components/panels/GradientTool";
 import FontPairingPanel from "../components/panels/FontPairingPanel";
 import ShareToAtlasModal from "../components/modals/ShareToAtlasModal";
+import styles from "./UserLocaleView.module.css";
+import NotFound from "./NotFound";
+import { loadFont } from "../utils/loadFont";
 
 export default function UserLocaleView() {
   const { localeId } = useParams();
@@ -22,147 +25,59 @@ export default function UserLocaleView() {
   useEffect(() => {
     if (!user) return;
     async function fetchLocale() {
-      const snap = await getDoc(
-        doc(db, "users", user.uid, "generatedLocales", localeId),
-      );
-      if (snap.exists()) {
-        setLocale(snap.data());
-        if (snap.data().fonts?.googleUrl) {
-          const existing = document.querySelector(
-            `link[href="${snap.data().fonts.googleUrl}"]`,
-          );
-          if (!existing) {
-            const link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.href = snap.data().fonts.googleUrl;
-            document.head.appendChild(link);
-          }
+      try {
+        const snap = await getDoc(
+          doc(db, "users", user.uid, "generatedLocales", localeId),
+        );
+        if (snap.exists()) {
+          const data = snap.data();
+          setLocale(data);
+          if (data.fonts?.googleUrl) loadFont(data.fonts.googleUrl);
         }
+      } catch (err) {
+        console.error("Failed to fetch locale:", err);
+      } finally {
+        setFetching(false);
       }
-      setFetching(false);
     }
     fetchLocale();
   }, [user, localeId]);
 
   if (loading || fetching)
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "#F0EBE0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "'DM Mono', monospace",
-          fontSize: "0.6rem",
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: "#888",
-        }}
-      >
-        Loading...
-      </div>
-    );
+    return <div className={styles.loading}>Loading...</div>;
 
-  if (!locale)
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "#F0EBE0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "'DM Mono', monospace",
-          fontSize: "0.6rem",
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: "#888",
-        }}
-      >
-        Locale not found.
-      </div>
-    );
+  if (!locale) return;
+  <NotFound />;
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F0EBE0",
-        fontFamily: "'DM Mono', monospace",
-      }}
-    >
+    <div className={styles.page}>
       <TopBanner leftText="← My Palettes" leftTo="/profile" />
 
-      <div style={{ padding: "2.5rem", maxWidth: "1200px" }}>
+      <div className={styles.content}>
         <LocaleHero locale={locale} albumId={null} />
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "2rem",
-            marginTop: "2.5rem",
-          }}
-        >
+        <div className={styles.grid}>
           <PalettePanel locale={locale} />
           <GradientTool locale={locale} />
           <FontPairingPanel locale={locale} />
         </div>
 
         {/* Actions */}
-        <div
-          style={{
-            marginTop: "2.5rem",
-            display: "flex",
-            gap: "1rem",
-            alignItems: "center",
-          }}
-        >
+        <div className={styles.actions}>
           {!shared ? (
             <button
+              className={styles.shareBtn}
               onClick={() => setShowShareModal(true)}
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: "0.65rem",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                padding: "0.75rem 2rem",
-                background: "#1A1A18",
-                color: "#F0EBE0",
-                border: "none",
-                cursor: "pointer",
-              }}
             >
               Share to Public Atlas →
             </button>
           ) : (
-            <span
-              style={{
-                fontFamily: "'DM Mono', monospace",
-                fontSize: "0.65rem",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "#3d5941",
-              }}
-            >
-              Shared to Atlas
-            </span>
+            <span className={styles.sharedConfirm}>Shared to Atlas</span>
           )}
 
           <button
+            className={styles.backBtn}
             onClick={() => navigate("/profile")}
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: "0.65rem",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              padding: "0.75rem 2rem",
-              background: "transparent",
-              color: "#888",
-              border: "1px solid #C8C0B0",
-              cursor: "pointer",
-            }}
           >
             Back to Profile
           </button>
