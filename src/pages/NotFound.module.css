@@ -1,0 +1,96 @@
+.page {
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+}
+
+.colorStrip {
+  display: flex;
+  height: 4px;
+}
+
+.colorSegment {
+  flex: 1;
+}
+
+.nav {
+  padding: 1.2rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 1.2rem;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 16vw, 10rem);
+  font-weight: 400;
+  line-height: 0.92;
+  color: var(--color-ink);
+  margin: 0 0 1.8rem 0;
+}
+
+.description {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  line-height: 1.9;
+  color: #777;
+  max-width: 380px;
+  margin-bottom: 2.2rem;
+  border-left: 2px solid var(--color-border);
+  padding-left: 0.85rem;
+  text-align: left;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-ink);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  cursor: pointer;
+}
+
+.footer {
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.52rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #bbb;
+}

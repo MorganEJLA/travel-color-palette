@@ -4,12 +4,8 @@ import SignInModal from "../components/modals/SignInModal";
 import landingImage from "../img/LandingPageEllipses.svg";
 import { useAuth } from "../hooks/useAuth";
 import styles from "./LandingPage.module.css";
-
-const COLOR_STRIP = [
-  "#3B6E8C", "#4E8C6E", "#C9A84C", "#5ab8a8",
-  "#c8503a", "#7a3ab8", "#b8982a", "#c8820a",
-  "#1a4a8a", "#D4A820",
-];
+import { COLOR_STRIP } from "../data/constants";
+import ChromaterraWordmark from "../components/layout/ChromaterraWordmark";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -18,27 +14,39 @@ export default function LandingPage() {
 
   return (
     <div className={styles.page}>
-
       {/* Color strip */}
       <div className={styles.colorStrip}>
         {COLOR_STRIP.map((color, i) => (
-          <div key={i} className={styles.colorSegment} style={{ background: color }} />
+          <div
+            key={i}
+            className={styles.colorSegment}
+            style={{ background: color }}
+          />
         ))}
       </div>
 
       {/* Nav */}
       <nav className={styles.nav}>
-        <span className={styles.logo}>Chromaterra</span>
+        <ChromaterraWordmark />
         <div className={styles.navLinks}>
-          <button className={styles.navButton} onClick={() => navigate("/atlas")}>
+          <button
+            className={styles.navButton}
+            onClick={() => navigate("/atlas")}
+          >
             Atlas
           </button>
           {user ? (
-            <button className={styles.navButton} onClick={() => navigate("/profile")}>
+            <button
+              className={styles.navButton}
+              onClick={() => navigate("/profile")}
+            >
               My Profile
             </button>
           ) : (
-            <button className={styles.navButton} onClick={() => setShowSignIn(true)}>
+            <button
+              className={styles.navButton}
+              onClick={() => setShowSignIn(true)}
+            >
               Sign In
             </button>
           )}
@@ -47,13 +55,14 @@ export default function LandingPage() {
 
       {/* Body */}
       <div className={styles.body}>
-
         {/* Left — copy */}
         <div className={styles.copy}>
           <p className={styles.eyebrow}>Your travels, distilled into color</p>
           <h1 className={styles.headline}>
-            Every<br />
-            Place<br />
+            Every
+            <br />
+            Place
+            <br />
             Has a<br />
             Palette
           </h1>
@@ -75,7 +84,6 @@ export default function LandingPage() {
         <div className={styles.illustration}>
           <img src={landingImage} alt="Travel landmarks with color palettes" />
         </div>
-
       </div>
 
       {/* Footer */}
@@ -90,7 +98,6 @@ export default function LandingPage() {
           onSuccess={() => navigate("/atlas")}
         />
       )}
-
     </div>
   );
 }
