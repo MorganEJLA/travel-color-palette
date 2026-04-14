@@ -1,128 +1,83 @@
-.loading {
-  min-height: 100vh;
-  background: var(--color-bg);
+.card {
+  background: #f0ebe0;
+  border: 1px solid #c8c0b0;
+  cursor: pointer;
+  transition: transform 0.1s;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.paletteStrip {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+  height: 6px;
 }
 
-.page {
-  min-height: 100vh;
-  background: var(--color-bg);
-  font-family: var(--font-mono);
-}
-
-.colorStrip {
-  display: flex;
-  height: 8px;
-}
-
-.colorSegment {
+.swatch {
   flex: 1;
 }
 
-.header {
-  padding: 3rem 2.5rem 2rem;
+.body {
+  padding: 1.25rem;
 }
 
-.userRow {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  margin: 0 0 0.25rem 0;
-}
-
-.headline {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 400;
-  line-height: 0.9;
-  color: var(--color-ink);
-  margin: 0;
-}
-
-.metaRow {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.count {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  color: #aaa;
-  margin: 0;
-}
-
-.generateBtn {
+.location {
   font-family: var(--font-mono);
   font-size: 0.55rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 0.4rem 1rem;
-  background: transparent;
-  color: var(--color-ink);
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-}
-
-.divider {
-  height: 1px;
-  width: 100%;
-  background: var(--color-border);
-  margin: 1.5rem 0 0;
-}
-
-.empty {
-  padding: 0 2.5rem;
-}
-
-.emptyText {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
   color: var(--color-muted);
-  text-transform: uppercase;
+  margin: 0 0 0.4rem;
 }
 
-.atlasBtn {
-  margin-top: 1rem;
+.name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--color-ink);
+  margin: 0 0 0.75rem;
+  line-height: 1;
+}
+
+.mood {
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.swatchNames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.swatchName {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0.75rem 1.5rem;
+  color: var(--color-muted);
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.5rem;
+}
+
+.shareBtn {
+  display: block;
+  width: calc(100% - 2.5rem);
+  margin: 0 1.25rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.6rem;
   background: var(--color-ink);
   color: var(--color-bg);
   border: none;
   cursor: pointer;
-}
-
-.grid {
-  padding: 0 2.5rem 2.5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  text-align: center;
 }
