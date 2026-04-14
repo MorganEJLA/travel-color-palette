@@ -27,7 +27,7 @@ export default function AlbumCard({
       onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
     >
       <div style={{ display: "flex", height: "6px" }}>
-        {album.previewColors.map((hex, i) => (
+        {(album.previewColors || []).map((hex, i) => (
           <div key={i} style={{ flex: 1, background: hex }} />
         ))}
       </div>

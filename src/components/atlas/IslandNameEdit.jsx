@@ -18,7 +18,7 @@ export default function IslandNameEdit({ island, albumId, onRename }) {
 
   if (editing) {
     return (
-      <div style={styles.editRow} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.editRow} onClick={(e) => e.stopPropagation()}>
         <input
           autoFocus
           value={value}
@@ -34,8 +34,8 @@ export default function IslandNameEdit({ island, albumId, onRename }) {
   }
 
   return (
-    <div style={styles.displayRow}>
-      <span style={styles.islandName}>{island.name}</span>
+    <div className={styles.displayRow}>
+      <span className={styles.islandName}>{island.name}</span>
       <button onClick={start} className="ghostButton">
         Edit
       </button>
