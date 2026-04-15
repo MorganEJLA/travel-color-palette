@@ -39,7 +39,7 @@
   font-size: 0.58rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #999;
+  color: #666;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -63,7 +63,7 @@
   font-size: 0.58rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #999;
+  color: #666;
   margin-bottom: 1.2rem;
 }
 
@@ -80,7 +80,7 @@
   font-size: 0.6rem;
   letter-spacing: 0.06em;
   line-height: 1.9;
-  color: #777;
+  color: #595959;
   max-width: 380px;
   margin-bottom: 1.5rem;
 }
@@ -89,7 +89,7 @@
   font-size: 0.58rem;
   letter-spacing: 0.06em;
   line-height: 1.9;
-  color: #aaa;
+  color: #767676;
   max-width: 380px;
   margin-bottom: 2.2rem;
   border-left: 2px solid #c8c0b0;
@@ -135,5 +135,5 @@
   font-size: 0.52rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #bbb;
+  color: #767676;
 }
