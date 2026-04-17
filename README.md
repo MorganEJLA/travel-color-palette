@@ -1,16 +1,39 @@
-# React + Vite
+# Chromaterra 🌍
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+*Every place has a palette.*
 
-Currently, two official plugins are available:
+A global color atlas built with React and Vite. Upload a travel photo 
+and get a culturally anchored color palette and font pairings inspired 
+by that place's visual identity.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🌐 [Live Site](https://chromaterra.vercel.app)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- Photo upload → color palette extraction
+- Culturally anchored palette suggestions by region and locale
+- Font pairings matched to place aesthetics
+- Data hierarchy: World → Region → Place → Sub-locale
+- Vintage travel poster visual direction (Abril Fatface / Montserrat / DM Mono)
+- WCAG 2AA accessibility audit completed via Pa11y
+- Open Graph meta tags for social sharing
+- Component refactor: Header, Footer, LocaleNav, PalettePanel
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+- React + Vite
+- JavaScript
+- CSS
+
+## Run Locally
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+*Deployed on Vercel.*
